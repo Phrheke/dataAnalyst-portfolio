@@ -10,8 +10,9 @@ models:
         description: Lowercased and trimmed, so it is safe to join on.
         data_tests:
           - not_null
-          # Unique only AFTER normalisation. On the raw column this fails,
-          # which is the whole point of normalising it.
+          # Tested AFTER normalisation, because that is the form joins use.
+          # Two raw emails differing only in case or spaces would pass a
+          # uniqueness test on the raw column and still be the same person.
           - unique
       - name: signup_date
         data_tests: [not_null]

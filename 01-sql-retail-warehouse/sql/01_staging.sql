@@ -51,7 +51,7 @@ FROM raw_products;
 --     rest are ISO. A plain CAST silently NULLs the minority format, which
 --     deletes real revenue and biases it toward whichever weeks the broken
 --     exporter was running. coalesce over two parse attempts keeps both.
---   * status has eight spellings for four states. I collapse casing, then map
+--   * status has eight spellings for five states. I collapse casing, then map
 --     to a revenue_recognised flag so that downstream queries never re-litigate
 --     which statuses count.
 --   * "Counts as revenue" = completed or shipped. Cancelled, refunded and

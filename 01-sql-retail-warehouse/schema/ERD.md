@@ -22,7 +22,7 @@ erDiagram
         bigint    order_id PK
         bigint    customer_id FK "40 rows orphaned"
         varchar   order_ts "2 formats in raw"
-        varchar   status "8 spellings, 4 states"
+        varchar   status "8 spellings, 5 states"
         varchar   channel
         varchar   discount_code "~72% null"
     }

@@ -21,7 +21,7 @@ sources:
       - name: orders
         description: >
           One row per order. order_ts arrives in two different formats and
-          status has eight spellings for four states.
+          status has eight spellings for five states.
         columns:
           - name: order_id
             data_tests: [not_null, unique]

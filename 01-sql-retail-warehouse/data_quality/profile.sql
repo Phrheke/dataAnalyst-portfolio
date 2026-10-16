@@ -76,7 +76,7 @@ FROM stg_order_items
 WHERE category IS NULL;
 
 .print '\n=== 5. Categorical vocabulary (the casing problem) ========================='
--- Eight spellings, four real states. Grouping on the raw column would split
+-- Eight spellings, five real states. Grouping on the raw column would split
 -- "completed" revenue across three rows.
 SELECT status AS raw_status, count(*) AS orders
 FROM raw_orders GROUP BY status ORDER BY orders DESC;

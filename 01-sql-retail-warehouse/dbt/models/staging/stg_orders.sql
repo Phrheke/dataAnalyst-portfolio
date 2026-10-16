@@ -1,7 +1,7 @@
 -- Two things happen here that cannot be skipped:
 --   1. order_ts is parsed with two format attempts. A single cast silently
 --      nulls 2% of rows, which deletes real revenue unevenly across weeks.
---   2. The eight status spellings collapse to four states, and the decision
+--   2. The eight status spellings collapse to five states, and the decision
 --      about which ones count as revenue is made once, here, via the
 --      recognised_statuses project variable.
 with source as (
