@@ -54,7 +54,7 @@ Done, and done to a standard you can defend:
 
 **This is the work that distinguishes you from everyone else with a portfolio.**
 
-The four projects here prove method. A fifth project in a domain you genuinely
+The five projects here prove method. A sixth project in a domain you genuinely
 know proves *judgement* — you will spot things in the data that a generic
 analyst cannot, and you can answer "why does that matter?" without guessing.
 
@@ -106,7 +106,7 @@ paragraphs.
 
 | | Task |
 |---|---|
-| [ ] | Rehearse the four walkthroughs to 2 minutes each, out loud, timed |
+| [ ] | Rehearse the five walkthroughs to 2 minutes each, out loud, timed |
 | [ ] | Two mock interviews with a human |
 | [ ] | Prepare your five questions for them |
 | [ ] | Re-run `make all` before every onsite so nothing is stale |

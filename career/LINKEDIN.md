@@ -18,8 +18,8 @@ Keyword-loaded on purpose: recruiters search by tool name.
 I turn messy transactional data into decisions someone can act on — and I show
 my working.
 
-Most recently I built a four-project portfolio end to end: a SQL and dbt
-warehouse analysis, a Python study on data I collected from a public API, a live
+Most recently I built a five-project portfolio end to end: an Excel business
+review reconciled against SQL, a SQL and dbt warehouse analysis, a Python study on data I collected from a public API, a live
 retention dashboard, and a churn capstone with a pre-registered experiment
 design.
 

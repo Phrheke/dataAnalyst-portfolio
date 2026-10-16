@@ -29,13 +29,15 @@ SUMMARY
 Data analyst who turns messy transactional data into decisions stakeholders can
 act on. Comfortable from raw ingestion through SQL modelling to the one-page memo
 that goes to the decision-maker. [X years of experience in Y / Recent transition
-from Z, with a portfolio of four end-to-end projects.]
+from Z, with a portfolio of five end-to-end projects.]
 
 
 SKILLS
 SQL          Window functions, CTEs, cohort analysis, query optimisation,
              dimensional modelling (DuckDB, PostgreSQL, BigQuery)
 Python       pandas, scipy, scikit-learn, statsmodels, matplotlib
+Excel        INDEX/MATCH, SUMIFS/COUNTIFS, PivotTables, Power Query, data
+             validation, conditional formatting, charts
 Analytics    Cohort retention, RFM segmentation, churn modelling, A/B test
              design and analysis, power analysis
 Engineering  dbt, Git, GitHub Actions, pytest, data quality testing
@@ -84,6 +86,12 @@ Retention dashboard (live)
 • Built the mart so all logic lives in SQL rather than in the BI layer, and
   validated the colour palette against colour-vision deficiency simulation.
 
+Excel business review
+• Built a 12-sheet workbook (182,000 formulas) analysing 8,700 orders: cleaning with
+  formulas, INDEX/MATCH lookups, cohort retention, RFM segments and an interactive
+  dashboard with a channel filter.
+• Reconciled 12 headline figures against an independent SQL calculation; all match.
+
 Python API analysis
 • Built an API client with retry, backoff, caching and provenance capture.
 • Identified pseudo-replication in the obvious analysis: daily observations were
@@ -101,7 +109,7 @@ EDUCATION
 
 ## Tailoring checklist, per application
 
-- [ ] Reorder the four projects so the most relevant is first
+- [ ] Reorder the five projects so the most relevant is first
 - [ ] Rewrite the summary line using the ad's own words
 - [ ] Drop any bullet the ad gives no signal about — one page, always
 - [ ] If the ad names a BI tool you have not used, say so honestly in the cover

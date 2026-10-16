@@ -179,7 +179,7 @@ Good questions signal seniority more than good answers do.
 - [ ] Re-read your own READMEs. You will be asked about a number and must not
       hesitate.
 - [ ] Run `make all` and confirm it still works from a clean clone.
-- [ ] Rehearse the four walkthroughs out loud, timed, to 2 minutes each.
+- [ ] Rehearse the five walkthroughs out loud, timed, to 2 minutes each.
 - [ ] Have the repo open in a tab, and the decision memo in another.
 - [ ] Write down the three numbers you most want to land. For this portfolio:
       **124% YoY growth, 12% six-month retention, and the 7-point MDE that

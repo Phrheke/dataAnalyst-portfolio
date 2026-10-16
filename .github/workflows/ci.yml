@@ -24,7 +24,7 @@ jobs:
           pip install ruff
 
       - name: Lint
-        run: ruff check src tests 02-python-pageviews/src 03-dashboard-retention/src 04-capstone-churn/src
+        run: ruff check src tests 00-excel-business-review 02-python-pageviews/src 03-dashboard-retention/src 04-capstone-churn/src
 
       # A cold run from a clean checkout. If a README quotes a number that the
       # code no longer produces, this is where it surfaces.
@@ -38,6 +38,9 @@ jobs:
         run: dbt build --profiles-dir .
         env:
           DBT_SEND_ANONYMOUS_USAGE_STATS: "False"
+
+      - name: Project 0 — Excel workbook builds
+        run: python 00-excel-business-review/build_workbook.py --db warehouse.duckdb --out /tmp/business_review.xlsx
 
       - name: Project 2 — fixture and analysis
         run: |

@@ -6,13 +6,14 @@ DB      ?= warehouse.duckdb
 RAW     ?= data/raw
 SQLDIR  := 01-sql-retail-warehouse
 
-.PHONY: help all data warehouse sql dq bench dbt python dashboard capstone test lint clean
+.PHONY: help all data warehouse excel sql dq bench dbt python dashboard capstone test lint clean
 
 help:
 	@echo "make install    install pinned dependencies"
-	@echo "make all        everything: data -> warehouse -> all four projects"
+	@echo "make all        everything: data -> warehouse -> all five projects"
 	@echo "make data       generate the synthetic warehouse CSVs (deterministic)"
 	@echo "make warehouse  load the CSVs into DuckDB and build the views"
+	@echo "make excel      project 0: rebuild the Excel business review workbook"
 	@echo "make dq         run the data quality audit"
 	@echo "make sql        run the ten analysis queries"
 	@echo "make bench      run the query optimisation benchmark"
@@ -26,7 +27,7 @@ help:
 install:
 	$(PY) -m pip install -r requirements.txt
 
-all: data warehouse dq sql python dashboard capstone test
+all: data warehouse excel dq sql python dashboard capstone test
 
 data:
 	$(PY) src/generate_warehouse.py --out $(RAW) --sample-out data/sample --seed 42
@@ -36,6 +37,9 @@ warehouse: data
 	$(PY) -c "import duckdb,pathlib; c=duckdb.connect('$(DB)'); \
 	  c.execute(pathlib.Path('$(SQLDIR)/sql/01_staging.sql').read_text()); \
 	  print('staging views built')"
+
+excel: warehouse
+	$(PY) 00-excel-business-review/build_workbook.py --db $(DB)
 
 dq: warehouse
 	duckdb $(DB) < $(SQLDIR)/data_quality/profile.sql
@@ -65,7 +69,7 @@ test:
 	$(PY) -m pytest tests/ -q
 
 lint:
-	ruff check src tests 02-python-pageviews/src 03-dashboard-retention/src 04-capstone-churn/src
+	ruff check src tests 00-excel-business-review 02-python-pageviews/src 03-dashboard-retention/src 04-capstone-churn/src
 
 clean:
 	rm -rf $(RAW) data/sample *.duckdb *.duckdb.wal

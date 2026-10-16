@@ -16,11 +16,12 @@ on — and I show my working.
 
 ### 📊 [Data analyst portfolio](https://github.com/Phrheke/dataAnalyst-portfolio)
 
-Four projects. Every number is reproduced by a command in the repo, and the
+Five projects. Every number is reproduced by a command in the repo, and the
 test suite asserts the claims the write-ups make.
 
 | | Project | Headline |
 |---|---|---|
+| 0 | Excel business review | 182,000 formulas, reconciled against SQL — all 12 checks match |
 | 1 | SQL + dbt warehouse analysis | Revenue grew 124% YoY, but only 12% of a cohort survives six months |
 | 2 | Python API analysis | The obvious statistical test overstates its confidence by ~15 orders of magnitude |
 | 3 | [Live retention dashboard](https://phrheke.github.io/dataAnalyst-portfolio/dashboard/) | Built for one reader and one decision |

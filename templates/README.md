@@ -1,6 +1,6 @@
 # Templates
 
-The structures behind the four projects in this repository. They exist so a new
+The structures behind the five projects in this repository. They exist so a new
 project starts from a shape that already works rather than a blank page.
 
 | Template | Use it for |

@@ -1,6 +1,6 @@
 # Data analyst portfolio — Phrheke
 
-Four projects, built to be checked rather than skimmed. Every number in every
+Five projects, built to be checked rather than skimmed. Every number in every
 README is reproduced by a command in this repo, and the test suite asserts the
 claims the write-ups make.
 
@@ -20,6 +20,7 @@ make all        # fresh clone to every artefact, about two minutes
 
 | | Project | What it demonstrates | Headline |
 |---|---|---|---|
+| 0 | **[Excel business review](00-excel-business-review/)** | Cleaning with formulas, `INDEX`/`MATCH`, cohort retention, RFM, an interactive dashboard sheet, and a **reconciliation sheet** checking 12 figures against SQL | H1 2025 cohorts: ₦249.6m net revenue, 63.6% from repeat purchases, but month-1 retention only 23.6% — [download the workbook](00-excel-business-review/business_review.xlsx) |
 | 1 | **[SQL warehouse analysis](01-sql-retail-warehouse/)** | CTEs, window functions, cohort retention, RFM, market basket; a data quality audit; a measured query-optimisation study; the same models rebuilt in **dbt** with 59 passing tests | Revenue grew 124% YoY, but only 12% of a cohort survives six months and 930 lapsed customers hold 17.8% of all-time revenue |
 | 2 | **[Python API analysis](02-python-pageviews/)** | A real API client with retries, backoff, caching and provenance; hypothesis testing done correctly; effect sizes with intervals; a five-variant sensitivity analysis | Professional topics lose 32.9% of weekday traffic at the weekend — and the obvious statistical test overstates its confidence by **15 orders of magnitude** |
 | 3 | **[Retention dashboard](03-dashboard-retention/)** | A purpose-built dashboard mart, one stakeholder, one decision; a **live** interactive dashboard with light/dark themes, tooltips, filters and an accessible table view | [Open the dashboard](https://phrheke.github.io/dataAnalyst-portfolio/dashboard/) |
@@ -93,6 +94,7 @@ data.
 
 ```
 ├── src/                      shared: the data generator and the DuckDB loader
+├── 00-excel-business-review/ the Excel workbook and the script that builds it
 ├── 01-sql-retail-warehouse/  SQL, dbt, data quality, optimisation benchmark
 ├── 02-python-pageviews/      API client, statistical analysis, notebook
 ├── 03-dashboard-retention/   dashboard mart, export, spec
