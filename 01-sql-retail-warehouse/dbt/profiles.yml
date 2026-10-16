@@ -1,0 +1,10 @@
+# Checked in on purpose: it contains no credentials, only a local file path.
+# A profile with real warehouse credentials belongs in ~/.dbt/profiles.yml and
+# reads them from environment variables.
+retail_warehouse:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "../../dbt_warehouse.duckdb"
+      threads: 4

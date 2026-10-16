@@ -1,0 +1,86 @@
+{
+  "segment": {
+    "at_risk_customers": 930,
+    "avg_lifetime_revenue": 175101.0,
+    "avg_orders": 4.98,
+    "avg_days_since_order": 366.0,
+    "average_order_value": 36293.0
+  },
+  "assumptions": {
+    "baseline_reactivation": 0.06,
+    "target_lift": 0.03,
+    "alpha": 0.05,
+    "power": 0.8,
+    "control_share": 0.3,
+    "email_cost_per_customer": 12.0
+  },
+  "design": {
+    "required_per_arm": 1209,
+    "required_total": 2418,
+    "rfm_segment_available": 930,
+    "model_scored_active_base": 2754,
+    "rfm_bucket_30pct_holdback_powered": false,
+    "rfm_bucket_mde": 0.06928743698429093,
+    "options": [
+      {
+        "label": "RFM 'at risk' bucket, 30% holdback",
+        "population": 930,
+        "control_share": 0.3,
+        "treatment_n": 651,
+        "control_n": 279,
+        "smaller_arm": 279,
+        "powered": false,
+        "mde": 0.06928743698429093
+      },
+      {
+        "label": "RFM 'at risk' bucket, 50% holdback",
+        "population": 930,
+        "control_share": 0.5,
+        "treatment_n": 465,
+        "control_n": 465,
+        "smaller_arm": 465,
+        "powered": false,
+        "mde": 0.05136075585898568
+      },
+      {
+        "label": "model-scored active base, 30% holdback",
+        "population": 2754,
+        "control_share": 0.3,
+        "treatment_n": 1928,
+        "control_n": 826,
+        "smaller_arm": 826,
+        "powered": false,
+        "mde": 0.037057305258066595
+      },
+      {
+        "label": "model-scored active base, 50% holdback",
+        "population": 2754,
+        "control_share": 0.5,
+        "treatment_n": 1377,
+        "control_n": 1377,
+        "smaller_arm": 1377,
+        "powered": true,
+        "mde": 0.027931537802318055
+      }
+    ],
+    "recommended": "model-scored active base, 50% holdback",
+    "recommended_treatment_n": 1377,
+    "recommended_control_n": 1377
+  },
+  "rehearsed_outcome": {
+    "absolute_lift": 0.02977487291212782,
+    "relative_lift": 0.4939759036144579,
+    "p_value": 0.0030442348713561884,
+    "ci": [
+      0.010112389164803042,
+      0.04943735665945259
+    ],
+    "gross_revenue_point": 2976026.0000000005,
+    "gross_revenue_low": 1010742.620644874,
+    "gross_revenue_high": 4941309.379355127,
+    "campaign_cost": 16524.0,
+    "net_point": 2959502.0000000005,
+    "net_low": 994218.620644874,
+    "breakeven_lift": 0.0001653211363072769
+  }
+}

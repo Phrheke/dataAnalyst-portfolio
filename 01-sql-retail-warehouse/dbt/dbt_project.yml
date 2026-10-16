@@ -1,0 +1,32 @@
+name: retail_warehouse
+version: "1.0.0"
+config-version: 2
+
+profile: retail_warehouse
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+vars:
+  # Declared once, referenced everywhere. The equivalent magic numbers in the
+  # hand-written SQL are comments; here they are configuration a reviewer can
+  # change in one place and re-run.
+  price_outlier_multiple: 20
+  recognised_statuses: ["completed", "shipped"]
+
+models:
+  retail_warehouse:
+    staging:
+      # Tables, not views. A view over an external CSV re-resolves its relative
+      # path every time it is queried, so a view-based staging layer produces a
+      # .duckdb file that only works when queried from this directory. Baking
+      # the data in makes the built warehouse portable, which is what a reviewer
+      # cloning this repo actually needs.
+      +materialized: table
+      +schema: staging
+    marts:
+      +materialized: table
+      +schema: marts

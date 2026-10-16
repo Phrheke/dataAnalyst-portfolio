@@ -1,0 +1,486 @@
+{
+  "source": {
+    "is_real_api_data": false,
+    "provenance": null
+  },
+  "data_quality": {
+    "rows": 8726,
+    "articles": 8,
+    "date_min": "2023-01-01",
+    "date_max": "2025-12-31",
+    "total_missing_days": 42,
+    "total_spike_days": 11,
+    "per_article": [
+      {
+        "article": "Association_football",
+        "days_present": 1092,
+        "days_in_span": 1096,
+        "missing_days": 4,
+        "pct_missing": 0.36,
+        "median_views": 7623,
+        "spike_days": 1,
+        "zero_days": 0
+      },
+      {
+        "article": "Data_analysis",
+        "days_present": 1089,
+        "days_in_span": 1096,
+        "missing_days": 7,
+        "pct_missing": 0.64,
+        "median_views": 1735,
+        "spike_days": 0,
+        "zero_days": 0
+      },
+      {
+        "article": "Machine_learning",
+        "days_present": 1094,
+        "days_in_span": 1096,
+        "missing_days": 2,
+        "pct_missing": 0.18,
+        "median_views": 4760,
+        "spike_days": 2,
+        "zero_days": 0
+      },
+      {
+        "article": "Microsoft_Excel",
+        "days_present": 1090,
+        "days_in_span": 1096,
+        "missing_days": 6,
+        "pct_missing": 0.55,
+        "median_views": 4740,
+        "spike_days": 2,
+        "zero_days": 0
+      },
+      {
+        "article": "Netflix",
+        "days_present": 1092,
+        "days_in_span": 1096,
+        "missing_days": 4,
+        "pct_missing": 0.36,
+        "median_views": 9512,
+        "spike_days": 2,
+        "zero_days": 0
+      },
+      {
+        "article": "Python_(programming_language)",
+        "days_present": 1087,
+        "days_in_span": 1096,
+        "missing_days": 9,
+        "pct_missing": 0.82,
+        "median_views": 10436,
+        "spike_days": 1,
+        "zero_days": 0
+      },
+      {
+        "article": "SQL",
+        "days_present": 1089,
+        "days_in_span": 1096,
+        "missing_days": 7,
+        "pct_missing": 0.64,
+        "median_views": 3203,
+        "spike_days": 2,
+        "zero_days": 0
+      },
+      {
+        "article": "Statistics",
+        "days_present": 1093,
+        "days_in_span": 1096,
+        "missing_days": 3,
+        "pct_missing": 0.27,
+        "median_views": 2570,
+        "spike_days": 1,
+        "zero_days": 0
+      }
+    ]
+  },
+  "by_article": {
+    "Association_football": {
+      "topic_class": "leisure",
+      "paired": {
+        "test": "paired t-test on weekly log(weekend/weekday) ratio",
+        "n_weeks": 156,
+        "t": 9.435625322588029,
+        "p_value": 5.5469001475603026e-17,
+        "p_value_wilcoxon": 1.4644274590712923e-15,
+        "geometric_mean_ratio": 1.1793537700941583,
+        "ratio_ci_low": 1.1393184006490717,
+        "ratio_ci_high": 1.220795972612152,
+        "weekend_effect_pct": 17.93537700941583,
+        "weekend_effect_pct_ci": [
+          13.931840064907174,
+          22.0795972612152
+        ],
+        "cohens_d": 0.7554546314512753
+      },
+      "naive": {
+        "test": "Welch t-test on individual days (pseudo-replication)",
+        "n_weekday_days": 779,
+        "n_weekend_days": 313,
+        "effective_n": 1092,
+        "t": 7.456816478515725,
+        "p_value": 5.128926578453073e-13
+      },
+      "autocorrelation": {
+        "lag1_all_days": 0.47265393318632687,
+        "lag7_all_days": 0.29468197123499,
+        "lag1_weekday_only": 0.5991548161483553
+      },
+      "bootstrap_ratio_ci": [
+        1.1398704884164859,
+        1.2203633071461175
+      ]
+    },
+    "Data_analysis": {
+      "topic_class": "professional",
+      "paired": {
+        "test": "paired t-test on weekly log(weekend/weekday) ratio",
+        "n_weeks": 156,
+        "t": -26.250028182679372,
+        "p_value": 6.3992230337763395e-59,
+        "p_value_wilcoxon": 3.1761765195344834e-27,
+        "geometric_mean_ratio": 0.6256850700950717,
+        "ratio_ci_low": 0.6039917449261498,
+        "ratio_ci_high": 0.6481575455766225,
+        "weekend_effect_pct": -37.431492990492835,
+        "weekend_effect_pct_ci": [
+          -39.60082550738502,
+          -35.18424544233775
+        ],
+        "cohens_d": -2.1016842751119773
+      },
+      "naive": {
+        "test": "Welch t-test on individual days (pseudo-replication)",
+        "n_weekday_days": 779,
+        "n_weekend_days": 310,
+        "effective_n": 1089,
+        "t": -27.56057201698056,
+        "p_value": 5.966847435106865e-121
+      },
+      "autocorrelation": {
+        "lag1_all_days": 0.5878683563910988,
+        "lag7_all_days": 0.4648768342737146,
+        "lag1_weekday_only": 0.7011969452176118
+      },
+      "bootstrap_ratio_ci": [
+        0.6039789737802406,
+        0.6474215902646064
+      ]
+    },
+    "Machine_learning": {
+      "topic_class": "professional",
+      "paired": {
+        "test": "paired t-test on weekly log(weekend/weekday) ratio",
+        "n_weeks": 156,
+        "t": -19.676197295039792,
+        "p_value": 5.424640819123789e-44,
+        "p_value_wilcoxon": 8.457835412940013e-27,
+        "geometric_mean_ratio": 0.6894912638452856,
+        "ratio_ci_low": 0.6642291058638083,
+        "ratio_ci_high": 0.7157141996973008,
+        "weekend_effect_pct": -31.050873615471442,
+        "weekend_effect_pct_ci": [
+          -33.57708941361916,
+          -28.428580030269924
+        ],
+        "cohens_d": -1.5753565733796855
+      },
+      "naive": {
+        "test": "Welch t-test on individual days (pseudo-replication)",
+        "n_weekday_days": 781,
+        "n_weekend_days": 313,
+        "effective_n": 1094,
+        "t": -21.945952623753627,
+        "p_value": 3.292406211224707e-87
+      },
+      "autocorrelation": {
+        "lag1_all_days": 0.4715994843154573,
+        "lag7_all_days": 0.37130331927878774,
+        "lag1_weekday_only": 0.4634446455372632
+      },
+      "bootstrap_ratio_ci": [
+        0.6634051798963491,
+        0.7148034482384835
+      ]
+    },
+    "Microsoft_Excel": {
+      "topic_class": "tooling",
+      "paired": {
+        "test": "paired t-test on weekly log(weekend/weekday) ratio",
+        "n_weeks": 156,
+        "t": -19.396785274264175,
+        "p_value": 2.6352771528029936e-43,
+        "p_value_wilcoxon": 8.363795518253864e-26,
+        "geometric_mean_ratio": 0.701092705239256,
+        "ratio_ci_low": 0.6761905122166828,
+        "ratio_ci_high": 0.7269119759287439,
+        "weekend_effect_pct": -29.890729476074394,
+        "weekend_effect_pct_ci": [
+          -32.38094877833172,
+          -27.30880240712561
+        ],
+        "cohens_d": -1.5529857078608116
+      },
+      "naive": {
+        "test": "Welch t-test on individual days (pseudo-replication)",
+        "n_weekday_days": 778,
+        "n_weekend_days": 312,
+        "effective_n": 1090,
+        "t": -17.83499576361318,
+        "p_value": 2.235972722738089e-62
+      },
+      "autocorrelation": {
+        "lag1_all_days": 0.4440561029424686,
+        "lag7_all_days": 0.31969735908144103,
+        "lag1_weekday_only": 0.425767135572669
+      },
+      "bootstrap_ratio_ci": [
+        0.6763594742616041,
+        0.7264497241460518
+      ]
+    },
+    "Netflix": {
+      "topic_class": "leisure",
+      "paired": {
+        "test": "paired t-test on weekly log(weekend/weekday) ratio",
+        "n_weeks": 156,
+        "t": 5.3273672554783635,
+        "p_value": 3.4516217137258744e-07,
+        "p_value_wilcoxon": 1.7251449994018838e-07,
+        "geometric_mean_ratio": 1.091051055633119,
+        "ratio_ci_low": 1.0563604308938732,
+        "ratio_ci_high": 1.1268809122193784,
+        "weekend_effect_pct": 9.105105563311898,
+        "weekend_effect_pct_ci": [
+          5.6360430893873215,
+          12.688091221937835
+        ],
+        "cohens_d": 0.42653074163071214
+      },
+      "naive": {
+        "test": "Welch t-test on individual days (pseudo-replication)",
+        "n_weekday_days": 780,
+        "n_weekend_days": 312,
+        "effective_n": 1092,
+        "t": 4.55483020026786,
+        "p_value": 6.104792565046484e-06
+      },
+      "autocorrelation": {
+        "lag1_all_days": 0.4847698709778576,
+        "lag7_all_days": 0.18921641946707476,
+        "lag1_weekday_only": 0.37607274966970783
+      },
+      "bootstrap_ratio_ci": [
+        1.0570731400181541,
+        1.127402860737503
+      ]
+    },
+    "Python_(programming_language)": {
+      "topic_class": "tooling",
+      "paired": {
+        "test": "paired t-test on weekly log(weekend/weekday) ratio",
+        "n_weeks": 156,
+        "t": -14.49943802118463,
+        "p_value": 1.1897552212561951e-30,
+        "p_value_wilcoxon": 4.0569821779344387e-22,
+        "geometric_mean_ratio": 0.770985414090164,
+        "ratio_ci_low": 0.7441448115367252,
+        "ratio_ci_high": 0.7987941319005564,
+        "weekend_effect_pct": -22.9014585909836,
+        "weekend_effect_pct_ci": [
+          -25.58551884632748,
+          -20.120586809944363
+        ],
+        "cohens_d": -1.1608841207717902
+      },
+      "naive": {
+        "test": "Welch t-test on individual days (pseudo-replication)",
+        "n_weekday_days": 777,
+        "n_weekend_days": 310,
+        "effective_n": 1087,
+        "t": -14.671796780995678,
+        "p_value": 1.6331232965898272e-43
+      },
+      "autocorrelation": {
+        "lag1_all_days": 0.46137136889716035,
+        "lag7_all_days": 0.20553019122007168,
+        "lag1_weekday_only": 0.3950303497153379
+      },
+      "bootstrap_ratio_ci": [
+        0.7444151113570244,
+        0.7978334240951669
+      ]
+    },
+    "SQL": {
+      "topic_class": "tooling",
+      "paired": {
+        "test": "paired t-test on weekly log(weekend/weekday) ratio",
+        "n_weeks": 156,
+        "t": -17.127223504822506,
+        "p_value": 1.4051865562513308e-37,
+        "p_value_wilcoxon": 2.609785375559034e-25,
+        "geometric_mean_ratio": 0.7402292370929908,
+        "ratio_ci_low": 0.7149891407498447,
+        "ratio_ci_high": 0.7663603434209085,
+        "weekend_effect_pct": -25.977076290700918,
+        "weekend_effect_pct_ci": [
+          -28.501085925015534,
+          -23.363965657909148
+        ],
+        "cohens_d": -1.371275339817161
+      },
+      "naive": {
+        "test": "Welch t-test on individual days (pseudo-replication)",
+        "n_weekday_days": 778,
+        "n_weekend_days": 311,
+        "effective_n": 1089,
+        "t": -16.04839113487032,
+        "p_value": 1.0817571561317012e-51
+      },
+      "autocorrelation": {
+        "lag1_all_days": 0.37659974095915544,
+        "lag7_all_days": 0.2383359523049305,
+        "lag1_weekday_only": 0.34209546768607896
+      },
+      "bootstrap_ratio_ci": [
+        0.7143935281446847,
+        0.7653657729961268
+      ]
+    },
+    "Statistics": {
+      "topic_class": "professional",
+      "paired": {
+        "test": "paired t-test on weekly log(weekend/weekday) ratio",
+        "n_weeks": 156,
+        "t": -22.375950293847065,
+        "p_value": 2.092698994236554e-50,
+        "p_value_wilcoxon": 5.965064394554355e-26,
+        "geometric_mean_ratio": 0.6522949794492102,
+        "ratio_ci_low": 0.6281492394337399,
+        "ratio_ci_high": 0.6773688695352278,
+        "weekend_effect_pct": -34.77050205507898,
+        "weekend_effect_pct_ci": [
+          -37.18507605662601,
+          -32.26311304647722
+        ],
+        "cohens_d": -1.7915098050940634
+      },
+      "naive": {
+        "test": "Welch t-test on individual days (pseudo-replication)",
+        "n_weekday_days": 781,
+        "n_weekend_days": 312,
+        "effective_n": 1093,
+        "t": -19.663110575183975,
+        "p_value": 2.6830204154678743e-66
+      },
+      "autocorrelation": {
+        "lag1_all_days": 0.5369780698901948,
+        "lag7_all_days": 0.44539107056093347,
+        "lag1_weekday_only": 0.7150914437916037
+      },
+      "bootstrap_ratio_ci": [
+        0.6279852785676403,
+        0.6780026408911387
+      ]
+    }
+  },
+  "by_topic_class": {
+    "leisure": {
+      "test": "paired t-test on weekly log(weekend/weekday) ratio",
+      "n_weeks": 156,
+      "t": 9.634680584759632,
+      "p_value": 1.655717111905891e-17,
+      "p_value_wilcoxon": 3.438869812343002e-16,
+      "geometric_mean_ratio": 1.1311851898559522,
+      "ratio_ci_low": 1.102954907284589,
+      "ratio_ci_high": 1.1601380303930087,
+      "weekend_effect_pct": 13.118518985595218,
+      "weekend_effect_pct_ci": [
+        10.295490728458901,
+        16.013803039300868
+      ],
+      "cohens_d": 0.7713918072696386
+    },
+    "professional": {
+      "test": "paired t-test on weekly log(weekend/weekday) ratio",
+      "n_weeks": 156,
+      "t": -33.37450556128643,
+      "p_value": 1.1754081002176185e-72,
+      "p_value_wilcoxon": 2.423968906916082e-27,
+      "geometric_mean_ratio": 0.6710567649991163,
+      "ratio_ci_low": 0.6553984322699697,
+      "ratio_ci_high": 0.687089195943615,
+      "weekend_effect_pct": -32.894323500088376,
+      "weekend_effect_pct_ci": [
+        -34.46015677300303,
+        -31.291080405638503
+      ],
+      "cohens_d": -2.6720989798432044
+    },
+    "tooling": {
+      "test": "paired t-test on weekly log(weekend/weekday) ratio",
+      "n_weeks": 156,
+      "t": -23.957592161549844,
+      "p_value": 5.599163066582233e-54,
+      "p_value_wilcoxon": 5.8776500641904004e-27,
+      "geometric_mean_ratio": 0.7491994240588253,
+      "ratio_ci_low": 0.731572809249401,
+      "ratio_ci_high": 0.7672507369238795,
+      "weekend_effect_pct": -25.080057594117466,
+      "weekend_effect_pct_ci": [
+        -26.842719075059897,
+        -23.274926307612056
+      ],
+      "cohens_d": -1.9181425012221016
+    }
+  },
+  "mean_lag1_autocorr_weekdays": 0.5022316941673285,
+  "naive_smaller_p_count": 6,
+  "median_log10_p_difference": 15.002843498787861,
+  "sensitivity_professional": {
+    "headline (all data)": {
+      "weekend_effect_pct": -32.89,
+      "ci": [
+        -34.46,
+        -31.29
+      ],
+      "p_value": 1.1754081002176185e-72,
+      "n_weeks": 156
+    },
+    "holidays excluded": {
+      "weekend_effect_pct": -33.32,
+      "ci": [
+        -34.85,
+        -31.75
+      ],
+      "p_value": 1.6241938366194713e-74,
+      "n_weeks": 156
+    },
+    "spikes excluded (>5 MAD)": {
+      "weekend_effect_pct": -32.79,
+      "ci": [
+        -34.2,
+        -31.35
+      ],
+      "p_value": 7.953230313587955e-79,
+      "n_weeks": 156
+    },
+    "2025 only": {
+      "weekend_effect_pct": -33.69,
+      "ci": [
+        -36.7,
+        -30.53
+      ],
+      "p_value": 1.8573052219768672e-23,
+      "n_weeks": 52
+    },
+    "Mon-Thu vs Sat-Sun (drop Friday)": {
+      "weekend_effect_pct": -32.74,
+      "ci": [
+        -34.48,
+        -30.96
+      ],
+      "p_value": 2.0027119621528689e-66,
+      "n_weeks": 156
+    }
+  }
+}

@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phrheke — Data Analyst</title>
+<meta name="description" content="Data analysis portfolio: SQL and dbt warehouse analysis, a Python API study, a live retention dashboard, and a churn capstone with a pre-registered experiment design.">
+<style>
+  :root {
+    color-scheme: light;
+    --page:     #f9f9f7;
+    --surface:  #fcfcfb;
+    --ink:      #0b0b0b;
+    --ink-2:    #52514e;
+    --muted:    #898781;
+    --border:   rgba(11,11,11,0.10);
+    --accent:   #2a78d6;
+    --accent-2: #eb6834;
+    --good:     #006300;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7;
+      --muted: #898781; --border: rgba(255,255,255,0.10);
+      --accent: #3987e5; --accent-2: #d95926; --good: #0ca30c;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7;
+    --muted: #898781; --border: rgba(255,255,255,0.10);
+    --accent: #3987e5; --accent-2: #d95926; --good: #0ca30c;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: var(--ink);
+         font: 16px/1.62 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 44px 16px 72px; }
+  a { color: var(--accent); }
+  a:hover { text-decoration-thickness: 2px; }
+
+  header.top { display: flex; justify-content: space-between; align-items: flex-start;
+               gap: 16px; margin-bottom: 38px; }
+  h1 { font-size: 2.05rem; margin: 0 0 6px; letter-spacing: -0.025em; }
+  .tagline { font-size: 1.1rem; color: var(--ink-2); margin: 0 0 14px; max-width: 54ch; }
+  .meta { color: var(--muted); font-size: 0.9rem; margin: 0; }
+  .meta a { color: var(--ink-2); }
+
+  button { font: inherit; font-size: 0.85rem; color: var(--ink-2); background: var(--surface);
+           border: 1px solid var(--border); border-radius: 7px; padding: 6px 11px;
+           cursor: pointer; white-space: nowrap; }
+  button:hover { border-color: var(--muted); }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  h2 { font-size: 1.05rem; margin: 40px 0 6px; letter-spacing: -0.01em; }
+  h2.section { text-transform: uppercase; font-size: 0.78rem; letter-spacing: 0.09em;
+               color: var(--muted); margin: 44px 0 16px; font-weight: 600; }
+  p { margin: 0 0 14px; }
+  .lead { color: var(--ink-2); }
+
+  .card { background: var(--surface); border: 1px solid var(--border);
+          border-radius: 12px; padding: 20px 22px; margin-bottom: 14px; }
+  .card h3 { margin: 0 0 4px; font-size: 1.1rem; letter-spacing: -0.01em; }
+  .card h3 a { text-decoration: none; color: var(--ink); }
+  .card h3 a:hover { color: var(--accent); text-decoration: underline; }
+  .card .q { color: var(--ink-2); font-size: 0.93rem; margin: 0 0 10px; }
+  .card .finding { border-left: 3px solid var(--accent-2); padding: 2px 0 2px 13px;
+                   margin: 0 0 12px; font-size: 0.95rem; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 0; }
+  .tag { font-size: 0.75rem; color: var(--ink-2); border: 1px solid var(--border);
+         border-radius: 99px; padding: 2px 9px; }
+  .links { margin: 13px 0 0; font-size: 0.9rem; display: flex; flex-wrap: wrap; gap: 14px; }
+  .num { color: var(--muted); font-size: 0.75rem; letter-spacing: 0.09em;
+         text-transform: uppercase; font-weight: 600; }
+
+  .cta { display: inline-block; background: var(--accent); color: #fff;
+         padding: 9px 16px; border-radius: 8px; text-decoration: none;
+         font-size: 0.92rem; font-weight: 500; }
+  .cta:hover { filter: brightness(1.08); }
+
+  ul { margin: 0 0 14px; padding-left: 20px; }
+  li { margin-bottom: 7px; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.86em;
+         background: color-mix(in oklab, var(--surface) 86%, var(--ink));
+         padding: 1px 5px; border-radius: 4px; }
+  .bugs li strong { color: var(--ink); }
+  footer { margin-top: 52px; padding-top: 20px; border-top: 1px solid var(--border);
+           color: var(--muted); font-size: 0.88rem; }
+
+  @media (max-width: 560px) {
+    h1 { font-size: 1.7rem; }
+    .wrap { padding-top: 30px; }
+    header.top { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <h1>Phrheke</h1>
+      <p class="tagline">Data analyst. I turn messy transactional data into decisions
+         someone can act on — and I show my working.</p>
+      <p class="meta">
+        <a href="https://github.com/Phrheke/dataAnalyst-portfolio">GitHub</a> ·
+        <a href="mailto:ruizdrey1@gmail.com">ruizdrey1@gmail.com</a>
+      </p>
+    </div>
+    <button id="theme" aria-pressed="false">Dark mode</button>
+  </header>
+
+  <p class="lead">Four projects. Every number in every write-up is reproduced by a
+     command in the repository, and the test suite asserts the claims the write-ups
+     make. If you only have two minutes, read
+     <a href="https://github.com/Phrheke/dataAnalyst-portfolio/blob/main/04-capstone-churn/reports/decision-memo.md">the
+     decision memo</a> — it is the one-page version written for a non-technical
+     decision-maker, which is the actual job.</p>
+
+  <h2 class="section">Projects</h2>
+
+  <article class="card">
+    <div class="num">01 — SQL &amp; dbt</div>
+    <h3><a href="https://github.com/Phrheke/dataAnalyst-portfolio/tree/main/01-sql-retail-warehouse">Retail warehouse analysis</a></h3>
+    <p class="q">A beauty e-commerce business is growing fast. Is the growth durable,
+       and where should the next ₦10m of retention budget go?</p>
+    <p class="finding">Revenue grew <strong>124% year on year</strong> and repeat
+       customers now drive 70% of it — but only <strong>12% of a cohort survives six
+       months</strong>, and 930 lapsed customers hold <strong>17.8% of all-time
+       revenue</strong>. Channel efficiency differs by 17x.</p>
+    <div class="tags">
+      <span class="tag">window functions</span><span class="tag">cohort retention</span>
+      <span class="tag">RFM</span><span class="tag">market basket</span>
+      <span class="tag">dbt · 59 tests</span><span class="tag">data quality audit</span>
+      <span class="tag">query optimisation</span>
+    </div>
+    <div class="links">
+      <a href="https://github.com/Phrheke/dataAnalyst-portfolio/blob/main/01-sql-retail-warehouse/data_quality/FINDINGS.md">Data quality findings</a>
+      <a href="https://github.com/Phrheke/dataAnalyst-portfolio/blob/main/01-sql-retail-warehouse/sql/03_optimisation.md">Optimisation study</a>
+    </div>
+  </article>
+
+  <article class="card">
+    <div class="num">02 — Python &amp; statistics</div>
+    <h3><a href="https://github.com/Phrheke/dataAnalyst-portfolio/tree/main/02-python-pageviews">Does professional curiosity take the weekend off?</a></h3>
+    <p class="q">Data collected from a public API. If people read about data analysis
+       for work, pageviews should fall at the weekend — and leisure topics should not.</p>
+    <p class="finding">Professional topics lose <strong>32.9% of weekday traffic at the
+       weekend</strong> (95% CI −34.5 to −31.3); leisure topics gain 13.1%. The
+       methodological finding matters more: the obvious day-level t-test
+       <strong>overstates its confidence by ~15 orders of magnitude</strong>, because
+       daily pageviews are autocorrelated.</p>
+    <div class="tags">
+      <span class="tag">API client · retries · caching</span><span class="tag">provenance</span>
+      <span class="tag">paired design</span><span class="tag">bootstrap CIs</span>
+      <span class="tag">sensitivity analysis</span><span class="tag">pandas · scipy</span>
+    </div>
+  </article>
+
+  <article class="card">
+    <div class="num">03 — Dashboard</div>
+    <h3><a href="dashboard/">Retention dashboard — live</a></h3>
+    <p class="q">The retention lead has a monthly budget and four minutes.
+       Where should the money go?</p>
+    <p class="finding">Built for <strong>one reader and one decision</strong>. The
+       specification was written first and includes a list of what was deliberately
+       <strong>left out</strong> — which is the part of dashboard work that actually
+       matters.</p>
+    <div class="tags">
+      <span class="tag">purpose-built mart</span><span class="tag">live &amp; interactive</span>
+      <span class="tag">light / dark</span><span class="tag">CVD-validated palette</span>
+      <span class="tag">accessible table view</span>
+    </div>
+    <div class="links">
+      <a class="cta" href="dashboard/">Open the dashboard</a>
+      <a href="https://github.com/Phrheke/dataAnalyst-portfolio/blob/main/03-dashboard-retention/spec/SPEC.md">Read the spec</a>
+    </div>
+  </article>
+
+  <article class="card">
+    <div class="num">04 — Capstone</div>
+    <h3><a href="https://github.com/Phrheke/dataAnalyst-portfolio/tree/main/04-capstone-churn">Churn prediction and a winback experiment</a></h3>
+    <p class="q">Can we predict who is about to go quiet — and does contacting them
+       actually work?</p>
+    <p class="finding">A model validated <strong>out of time</strong> (ROC AUC 0.745).
+       But the most useful output was the power calculation that
+       <strong>invalidated my own first design</strong>: it could only have detected a
+       7-point lift, so a real, valuable effect would have been reported as "no
+       effect". The fix changed both the target and the split.</p>
+    <div class="tags">
+      <span class="tag">leak-free features</span><span class="tag">out-of-time validation</span>
+      <span class="tag">calibration</span><span class="tag">collinearity diagnostics</span>
+      <span class="tag">power analysis</span><span class="tag">decision memo</span>
+    </div>
+    <div class="links">
+      <a class="cta" href="https://github.com/Phrheke/dataAnalyst-portfolio/blob/main/04-capstone-churn/reports/decision-memo.md">Read the decision memo</a>
+    </div>
+  </article>
+
+  <h2 class="section">What I think makes this different</h2>
+
+  <p>Most portfolios show that the author can get a query to run. These are the
+     things I would want to see if I were hiring.</p>
+
+  <p><strong>Three bugs I found in my own work, documented rather than quietly
+     fixed.</strong></p>
+  <ul class="bugs">
+    <li><strong>Non-deterministic segment sizes.</strong> Three runs of the same
+        <code>NTILE</code> query on the same data gave 1,006 / 1,003 / 1,029
+        customers, because ties in a non-total <code>ORDER BY</code> get placed
+        arbitrarily under parallel execution. I caught it because the dashboard
+        disagreed with the README.</li>
+    <li><strong>A filter applied to revenue but not refunds.</strong> A price-typo
+        exclusion was gated on one measure and not the other, producing customers
+        with negative six-figure lifetime value who looked like ordinary low-value
+        customers.</li>
+    <li><strong>A docstring that was backwards.</strong> It claimed a sample-size
+        shortcut was anti-conservative. It is conservative — <code>p(1−p)</code> is
+        concave. A test caught it.</li>
+  </ul>
+
+  <p><strong>Results that argue against me.</strong> The optimisation study reports
+     that two of three rewrites stop paying at scale, and that one produces a query
+     plan identical to the version it was meant to improve. The churn model's
+     top-decile lift is 1.50x, which looks weak until you note the ceiling at a 57%
+     base rate is 1.74x — so the write-up explains the ceiling instead of hiding the
+     number.</p>
+
+  <p><strong>Claims that are executable.</strong> One test asserts the hand-written
+     SQL and the dbt project agree to the naira. Another validates every hand-rolled
+     statistic against statsmodels and scipy. Nothing says "I de-duplicated the data"
+     without a test proving it.</p>
+
+  <p><strong>Decisions, with their costs.</strong> Returns are reported separately
+     rather than netted off silently; price outliers are flagged, not overwritten;
+     orphaned orders keep their revenue but leave the per-customer averages. Each
+     choice is stated once, in one place, with what it gives up.</p>
+
+  <h2 class="section">A note on the data</h2>
+  <p class="lead">The warehouse is synthetic, generated deterministically with a fixed
+     seed and carrying eight deliberately planted data quality faults. That means
+     every project runs the moment you clone the repo — no credentials, no large
+     download — and the cleaning decisions can be checked against known ground truth.
+     The cost is that no <em>business</em> finding describes a real company, and each
+     project says so at the top. Project 2 ships a working client for a real public
+     API; one command swaps its fixture for live data.</p>
+
+  <h2 class="section">Tools</h2>
+  <p class="lead">SQL (DuckDB, Postgres dialects) · dbt · Python (pandas, scipy,
+     scikit-learn, statsmodels) · Git &amp; GitHub Actions · data visualisation ·
+     experiment design</p>
+
+  <footer>
+    <p>Built in the open —
+       <a href="https://github.com/Phrheke/dataAnalyst-portfolio">read the source</a>.
+       Get in touch at <a href="mailto:ruizdrey1@gmail.com">ruizdrey1@gmail.com</a>.</p>
+  </footer>
+</div>
+
+<script>
+  // Remember the choice per viewer; fall back silently if storage is blocked.
+  (() => {
+    const btn = document.getElementById("theme");
+    const set = (dark) => {
+      document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+      btn.setAttribute("aria-pressed", String(dark));
+      btn.textContent = dark ? "Light mode" : "Dark mode";
+    };
+    let saved = null;
+    try { saved = localStorage.getItem("theme"); } catch (e) { /* private mode */ }
+    if (saved) set(saved === "dark");
+    else set(window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+    btn.addEventListener("click", () => {
+      const dark = document.documentElement.getAttribute("data-theme") !== "dark";
+      set(dark);
+      try { localStorage.setItem("theme", dark ? "dark" : "light"); } catch (e) { /* ignore */ }
+    });
+  })();
+</script>
+</body>
+</html>

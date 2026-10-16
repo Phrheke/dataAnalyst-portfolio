@@ -1,0 +1,50 @@
+version: 2
+
+models:
+  - name: fct_orders
+    description: >
+      One row per order with item revenue rolled up. Includes orders that do
+      not count as revenue and orders from test and orphaned customers, all
+      flagged. Read analysis_orders instead unless you specifically want them.
+    columns:
+      - name: order_id
+        data_tests: [not_null, unique]
+      - name: gross_revenue
+        data_tests: [not_null, not_negative]
+      - name: is_orphan_order
+        data_tests: [not_null]
+
+  - name: analysis_orders
+    description: fct_orders filtered to recognised, non-test, non-orphan orders.
+    columns:
+      - name: order_id
+        data_tests: [not_null, unique]
+      - name: customer_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: customer_id
+
+  - name: dim_customers
+    description: One row per non-test customer with lifetime aggregates.
+    columns:
+      - name: customer_id
+        data_tests: [not_null, unique]
+      - name: orders_count
+        data_tests: [not_null, not_negative]
+
+  - name: mart_cohort_retention
+    description: Signup-month cohorts by months since signup.
+    columns:
+      - name: retention_pct
+        description: >
+          Can exceed 100 only if a cohort has more active customers than its
+          size, which would mean the join fanned out. The test is the guard.
+        data_tests:
+          - not_negative
+          - dbt_utils_accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100

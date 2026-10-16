@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main, "claude/**"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install ruff
+
+      - name: Lint
+        run: ruff check src tests 02-python-pageviews/src 03-dashboard-retention/src 04-capstone-churn/src
+
+      # A cold run from a clean checkout. If a README quotes a number that the
+      # code no longer produces, this is where it surfaces.
+      - name: Generate data and build the warehouse
+        run: |
+          python src/generate_warehouse.py --out data/raw --sample-out data/sample --seed 42
+          python src/load_duckdb.py --db warehouse.duckdb --raw data/raw
+
+      - name: dbt build (59 tests)
+        working-directory: 01-sql-retail-warehouse/dbt
+        run: dbt build --profiles-dir .
+        env:
+          DBT_SEND_ANONYMOUS_USAGE_STATS: "False"
+
+      - name: Project 2 — fixture and analysis
+        run: |
+          python 02-python-pageviews/src/simulate_offline.py --out 02-python-pageviews/data
+          python 02-python-pageviews/src/analyse.py
+
+      - name: Project 3 — dashboard export
+        run: python 03-dashboard-retention/src/export_dashboard_data.py --db warehouse.duckdb
+
+      - name: Project 4 — churn model and experiment design
+        run: |
+          python 04-capstone-churn/src/churn_model.py --db warehouse.duckdb
+          PYTHONPATH=04-capstone-churn/src python 04-capstone-churn/src/design_winback_test.py --db warehouse.duckdb
+
+      - name: Tests
+        run: python -m pytest tests/ -q

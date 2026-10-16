@@ -1,0 +1,60 @@
+{
+  "train_snapshot": {
+    "cutoff": "2025-04-02 00:00:00",
+    "n": 2088,
+    "churn_rate": 0.6863026819923371
+  },
+  "test_snapshot": {
+    "cutoff": "2025-09-29 00:00:00",
+    "n": 2754,
+    "churn_rate": 0.5740740740740741
+  },
+  "out_of_time": {
+    "baseline": {
+      "roc_auc": 0.5,
+      "pr_auc": 0.5740740740740741,
+      "brier": 0.2571082919853398
+    },
+    "logistic": {
+      "roc_auc": 0.7450112239709292,
+      "pr_auc": 0.7721794182459687,
+      "brier": 0.20742659307987102
+    },
+    "gbm": {
+      "roc_auc": 0.7288646668963766,
+      "pr_auc": 0.772990610942391,
+      "brier": 0.21490887707734624
+    }
+  },
+  "in_snapshot_random_split_roc_auc": 0.755017942583732,
+  "in_snapshot_cv_roc_auc_mean": 0.7415954339950089,
+  "in_snapshot_cv_roc_auc_std": 0.017494845417002736,
+  "optimism_auc": -0.0034157899759202914,
+  "best_model": "logistic",
+  "top_decile_lift": 1.4957924263674616,
+  "top_decile_lift_ceiling": 1.7419354838709677,
+  "top_decile_pct_of_ceiling": 0.8586956521739131,
+  "top_decile_pct_of_churners": 14.990512333965844,
+  "n_features": 23,
+  "collinear_pairs_over_0.8": 6,
+  "coefficient_sign_flips": [
+    {
+      "feature": "orders_total",
+      "model_says": "increases churn",
+      "data_says": "reduces churn",
+      "coefficient": 0.452
+    },
+    {
+      "feature": "orders_prev_90d",
+      "model_says": "reduces churn",
+      "data_says": "increases churn",
+      "coefficient": -0.219
+    },
+    {
+      "feature": "median_gap_days",
+      "model_says": "increases churn",
+      "data_says": "reduces churn",
+      "coefficient": 0.133
+    }
+  ]
+}

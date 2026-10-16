@@ -1,0 +1,30 @@
+# Pinned lint config. Without this, ruff picks up whatever config happens to be
+# above this directory, so the same code lints differently on my machine and on
+# a reviewer's.
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["01-sql-retail-warehouse/dbt/target", "*.ipynb"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "I",    # import sorting
+    "B",    # bugbear: likely bugs rather than style
+    "UP",   # pyupgrade
+    "C4",   # comprehension clarity
+]
+ignore = [
+    "E741",  # ambiguous variable names; `l` never appears here anyway
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests import the modules under test after a sys.path insert, which has to
+# happen before the import. That is deliberate, not an unsorted-import bug.
+"tests/*" = ["E402"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

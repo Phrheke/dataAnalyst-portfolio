@@ -1,0 +1,38 @@
+version: 2
+
+sources:
+  - name: raw
+    description: >
+      The CSVs as the upstream export produced them. dbt-duckdb reads them in
+      place via external_location, so there is no separate load step and no
+      chance of the dbt models and the hand-written SQL diverging because
+      someone forgot to re-run a loader.
+    meta:
+      external_location: "read_csv('{{ env_var('DBT_RAW_DIR', '../../data/raw') }}/{name}.csv', header = true, all_varchar = true)"
+    tables:
+      - name: customers
+        description: One row per registered customer.
+        columns:
+          - name: customer_id
+            description: Surrogate key from the application database.
+            data_tests: [not_null]
+      - name: products
+        description: One row per SKU.
+      - name: orders
+        description: >
+          One row per order. order_ts arrives in two different formats and
+          status has eight spellings for four states.
+        columns:
+          - name: order_id
+            data_tests: [not_null, unique]
+      - name: order_items
+        description: >
+          One row per line item. Contains ~1.2% exact duplicate rows from an
+          ETL retry, so order_item_id is NOT unique here. The uniqueness test
+          lives on the staging model, after de-duplication, rather than on the
+          source -- asserting it here would just fail every run and train the
+          team to ignore red tests.
+      - name: sessions
+        description: One row per browsing session.
+      - name: marketing_spend
+        description: Channel x month spend. No customer key, so no causal CAC.

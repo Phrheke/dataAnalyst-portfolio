@@ -1,0 +1,7 @@
+feature_a,feature_b,abs_correlation
+orders_total,active_months,0.924
+orders_total,revenue_total,0.9
+tenure_days,active_span_days,0.847
+active_span_days,active_months,0.844
+revenue_total,active_months,0.827
+active_span_days,max_gap_days,0.806

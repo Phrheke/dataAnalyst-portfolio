@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Retention Dashboard</title>
+<style>
+  /* Palette defined as role tokens so light/dark swaps in one place and the
+     chart code is written against roles rather than raw hex. */
+  :root {
+    color-scheme: light;
+    --page:           #f9f9f7;
+    --surface:        #fcfcfb;
+    --ink:            #0b0b0b;
+    --ink-2:          #52514e;
+    --muted:          #898781;
+    --grid:           #e1e0d9;
+    --baseline:       #c3c2b7;
+    --border:         rgba(11,11,11,0.10);
+    --series-1:       #2a78d6;
+    --series-2:       #eb6834;
+    --series-3:       #1baf7a;
+    --good:           #006300;
+    --critical:       #d03b3b;
+    --warning:        #fab219;
+    --seq-dir:        1;   /* 1 = light means low; flipped in dark mode */
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --page:     #0d0d0d;
+      --surface:  #1a1a19;
+      --ink:      #f0efec;
+      --ink-2:    #c3c2b7;
+      --muted:    #898781;
+      --grid:     #2c2c2a;
+      --baseline: #383835;
+      --border:   rgba(255,255,255,0.10);
+      --series-1: #3987e5;
+      --series-2: #d95926;
+      --series-3: #199e70;
+      --good:     #0ca30c;
+      --critical: #d03b3b;
+      --seq-dir:  0;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page:     #0d0d0d;
+    --surface:  #1a1a19;
+    --ink:      #f0efec;
+    --ink-2:    #c3c2b7;
+    --muted:    #898781;
+    --grid:     #2c2c2a;
+    --baseline: #383835;
+    --border:   rgba(255,255,255,0.10);
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --good:     #0ca30c;
+    --critical: #d03b3b;
+    --seq-dir:  0;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--ink);
+    font: 15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 28px 16px 64px; }
+
+  header.page { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start;
+                justify-content: space-between; margin-bottom: 4px; }
+  h1 { font-size: 1.45rem; margin: 0 0 2px; letter-spacing: -0.01em; }
+  .sub { color: var(--ink-2); font-size: 0.9rem; margin: 0; max-width: 62ch; }
+  .for-whom { color: var(--muted); font-size: 0.8rem; margin: 10px 0 0;
+              text-transform: uppercase; letter-spacing: 0.06em; }
+
+  button {
+    font: inherit; font-size: 0.85rem; color: var(--ink-2);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 7px; padding: 6px 11px; cursor: pointer;
+  }
+  button[aria-pressed="true"] { color: var(--ink); border-color: var(--baseline);
+                                background: color-mix(in oklab, var(--surface) 86%, var(--ink)); }
+  button:hover { border-color: var(--baseline); }
+  button:focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; }
+
+  /* Filters live in one row above the charts, never inside a chart card. */
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+             margin: 22px 0 18px; padding-bottom: 16px;
+             border-bottom: 1px solid var(--border); }
+  .filters .label { color: var(--muted); font-size: 0.78rem;
+                    text-transform: uppercase; letter-spacing: 0.06em; margin-right: 2px; }
+  .spacer { flex: 1 1 auto; }
+
+  .tiles { display: grid; gap: 12px; grid-template-columns: repeat(4, 1fr); margin-bottom: 20px; }
+  .tile { background: var(--surface); border: 1px solid var(--border);
+          border-radius: 11px; padding: 15px 16px; }
+  .tile .k { color: var(--muted); font-size: 0.74rem; text-transform: uppercase;
+             letter-spacing: 0.07em; margin-bottom: 7px; }
+  .tile .v { font-size: 1.75rem; line-height: 1.1; letter-spacing: -0.02em; }
+  .tile .d { font-size: 0.82rem; color: var(--ink-2); margin-top: 5px; }
+  .up   { color: var(--good); }
+  .down { color: var(--critical); }
+
+  .grid2 { display: grid; gap: 14px; grid-template-columns: 1fr 1fr; }
+  .card { background: var(--surface); border: 1px solid var(--border);
+          border-radius: 11px; padding: 16px 18px 12px; margin-bottom: 14px; }
+  .card h2 { font-size: 0.98rem; margin: 0 0 3px; }
+  .card .note { color: var(--ink-2); font-size: 0.82rem; margin: 0 0 12px; max-width: 70ch; }
+  .card .annot { color: var(--muted); font-size: 0.78rem; margin: 8px 0 0;
+                 padding-top: 9px; border-top: 1px solid var(--border); }
+  .card header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; margin: 0 0 10px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px;
+                 color: var(--ink-2); font-size: 0.82rem; }
+  .swatch { width: 11px; height: 11px; border-radius: 3px; flex: none; }
+
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .ax { fill: var(--muted); font-size: 11px; }
+  .ax-val { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+  .gridline { stroke: var(--grid); stroke-width: 1; }
+  .baseline { stroke: var(--baseline); stroke-width: 1; }
+  .hit { fill: transparent; cursor: pointer; }
+  .dlabel { fill: var(--ink-2); font-size: 11px; font-variant-numeric: tabular-nums; }
+
+  table { border-collapse: collapse; width: 100%; font-size: 0.86rem; }
+  th, td { text-align: right; padding: 7px 9px; border-bottom: 1px solid var(--border); }
+  th:first-child, td:first-child { text-align: left; }
+  th { color: var(--muted); font-weight: 600; font-size: 0.74rem;
+       text-transform: uppercase; letter-spacing: 0.05em; }
+  td.num { font-variant-numeric: tabular-nums; }
+  tr.act td { background: color-mix(in oklab, var(--surface) 92%, var(--series-2)); }
+  .pill { display: inline-block; font-size: 0.74rem; padding: 2px 8px;
+          border-radius: 99px; border: 1px solid var(--border); color: var(--ink-2); }
+  .pill.now { border-color: var(--series-2); color: var(--series-2); font-weight: 600; }
+
+  .tooltip {
+    position: fixed; pointer-events: none; opacity: 0; transition: opacity .09s;
+    background: var(--surface); color: var(--ink); border: 1px solid var(--baseline);
+    border-radius: 8px; padding: 8px 10px; font-size: 0.8rem; z-index: 20;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.13); max-width: 260px;
+  }
+  .tooltip .tt-k { color: var(--muted); font-size: 0.74rem; }
+  .tooltip .tt-row { display: flex; gap: 10px; justify-content: space-between;
+                     font-variant-numeric: tabular-nums; }
+  .hidden { display: none; }
+  footer.page { color: var(--muted); font-size: 0.8rem; margin-top: 26px;
+                padding-top: 16px; border-top: 1px solid var(--border); }
+  footer.page a { color: var(--ink-2); }
+
+  @media (max-width: 880px) {
+    .tiles { grid-template-columns: repeat(2, 1fr); }
+    .grid2 { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 520px) {
+    .tiles { grid-template-columns: 1fr; }
+    .tile .v { font-size: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="page">
+    <div>
+      <h1>Retention Dashboard</h1>
+      <p class="sub">One question: where should next month's retention budget go?
+         Every panel below exists to answer that, and nothing is here that does not.</p>
+      <p class="for-whom">Built for the retention lead &middot; reviewed monthly</p>
+    </div>
+    <button id="theme" aria-pressed="false" title="Switch between light and dark">Dark mode</button>
+  </header>
+
+  <div class="filters" role="group" aria-label="Dashboard filters">
+    <span class="label">Period</span>
+    <button class="range" data-months="12" aria-pressed="true">Last 12 months</button>
+    <button class="range" data-months="0"  aria-pressed="false">All time</button>
+    <span class="spacer"></span>
+    <button id="tableToggle" aria-pressed="false">Show heatmap as table</button>
+  </div>
+
+  <section class="tiles" id="tiles" aria-label="Headline metrics"></section>
+
+  <div class="card">
+    <header>
+      <div>
+        <h2>Revenue by month, split new vs returning</h2>
+        <p class="note">A business whose growth is all first-time buyers is renting its
+           revenue from ad platforms. The orange band is the part that is actually owned.</p>
+      </div>
+    </header>
+    <div class="legend" id="legend-split"></div>
+    <svg id="chart-split" role="img" aria-label="Stacked bar chart of monthly revenue split into new and returning customers"></svg>
+    <p class="annot" id="annot-split"></p>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h2>Average retention curve</h2>
+      <p class="note">Averaged only over cohorts with a complete six months, so every
+         point is computed on the same set of cohorts. The band is the best and worst cohort.</p>
+      <div class="legend" id="legend-curve"></div>
+      <svg id="chart-curve" role="img" aria-label="Line chart of average retention by months since signup, with a range band"></svg>
+      <p class="annot" id="annot-curve"></p>
+    </div>
+
+    <div class="card">
+      <h2>Channel efficiency</h2>
+      <p class="note">Revenue returned per ₦1 of spend, over each cohort's first 12 months.
+         Unpaid channels have no spend recorded and are shown for reference only.</p>
+      <svg id="chart-channel" role="img" aria-label="Bar chart of revenue per naira spent by acquisition channel"></svg>
+      <p class="annot">Blended CAC, not causal — spend has no customer-level
+         attribution, so this ranks channels rather than pricing them.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <header>
+      <div>
+        <h2>Cohort retention</h2>
+        <p class="note">Each row is a signup month, each column the months since. Censored
+           cells are removed rather than drawn as zero, so no cell reads as churn when it
+           is really the calendar.</p>
+      </div>
+    </header>
+    <div id="heat-chart">
+      <svg id="chart-heat" role="img" aria-label="Heatmap of retention rate by signup cohort and months since signup"></svg>
+      <div class="legend" id="legend-heat" style="margin-top:12px"></div>
+    </div>
+    <div id="heat-table" class="hidden"></div>
+    <p class="annot">Colour encodes a continuous value, so the table view above is the
+       accessible equivalent — not an afterthought.</p>
+  </div>
+
+  <div class="card">
+    <h2>Segments, and what to do about each</h2>
+    <p class="note">The action column is the point of the panel. A segmentation that
+       does not end in a recommendation is a spreadsheet.</p>
+    <div id="segments"></div>
+  </div>
+
+  <footer class="page">
+    <strong>Synthetic data.</strong> Generated deterministically by
+    <code>src/generate_warehouse.py</code>; no finding here describes a real business.
+    Built from <code>03-dashboard-retention/sql/dashboard_mart.sql</code>.
+    <span id="genat"></span>
+    &middot; <a href="../index.html">Back to portfolio</a>
+  </footer>
+</div>
+
+<div class="tooltip" id="tt" role="status" aria-live="polite"></div>
+
+<script src="data.js"></script>
+<script>
+(() => {
+  "use strict";
+  const D = window.DASHBOARD_DATA;
+  const tt = document.getElementById("tt");
+  const $ = (id) => document.getElementById(id);
+
+  if (!D) {
+    document.querySelector(".wrap").insertAdjacentHTML("afterbegin",
+      '<div class="card"><h2>Data not loaded</h2><p class="note">Run ' +
+      '<code>python 03-dashboard-retention/src/export_dashboard_data.py</code> ' +
+      'to generate <code>data.js</code>.</p></div>');
+    return;
+  }
+
+  // ---- state -------------------------------------------------------------
+  let months = 12;        // period filter; 0 = all time
+  let heatAsTable = false;
+
+  // ---- formatting --------------------------------------------------------
+  const nf = new Intl.NumberFormat("en-NG");
+  const money = (v) => {
+    const a = Math.abs(v);
+    if (a >= 1e9) return "₦" + (v / 1e9).toFixed(2) + "bn";
+    if (a >= 1e6) return "₦" + (v / 1e6).toFixed(1) + "m";
+    if (a >= 1e3) return "₦" + Math.round(v / 1e3) + "k";
+    return "₦" + nf.format(Math.round(v));
+  };
+  const pct = (v, dp = 1) => (v === null || v === undefined ? "—" : v.toFixed(dp) + "%");
+  const monthLabel = (iso) => {
+    const d = new Date(iso + "T00:00:00");
+    return d.toLocaleString("en", { month: "short" }) + " " + String(d.getFullYear()).slice(2);
+  };
+
+  // ---- tooltip -----------------------------------------------------------
+  function showTip(evt, html) {
+    tt.innerHTML = html;
+    tt.style.opacity = "1";
+    const r = tt.getBoundingClientRect();
+    let x = evt.clientX + 14, y = evt.clientY - 10;
+    if (x + r.width > window.innerWidth - 8) x = evt.clientX - r.width - 14;
+    if (y + r.height > window.innerHeight - 8) y = window.innerHeight - r.height - 8;
+    tt.style.left = Math.max(8, x) + "px";
+    tt.style.top = Math.max(8, y) + "px";
+  }
+  const hideTip = () => { tt.style.opacity = "0"; };
+
+  // Hit targets are always bigger than the mark, and every chart clears the
+  // tooltip on leave so it cannot be left stranded on touch devices.
+  function attachTip(el, html) {
+    el.addEventListener("mousemove", (e) => showTip(e, html));
+    el.addEventListener("mouseenter", (e) => showTip(e, html));
+    el.addEventListener("mouseleave", hideTip);
+  }
+
+  const svgEl = (name, attrs = {}) => {
+    const n = document.createElementNS("http://www.w3.org/2000/svg", name);
+    for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
+    return n;
+  };
+
+  function legend(host, items) {
+    host.innerHTML = items.map((i) =>
+      `<span><i class="swatch" style="background:${i.colour}"></i>${i.label}</span>`).join("");
+  }
+
+  // ---- sequential ramp (one hue, light to dark) ---------------------------
+  const RAMP = ["#cde2fb","#b7d3f6","#9ec5f4","#86b6ef","#6da7ec","#5598e7",
+                "#3987e5","#2a78d6","#256abf","#1c5cab","#184f95","#104281","#0d366b"];
+  const isDark = () => getComputedStyle(document.documentElement)
+                        .getPropertyValue("--seq-dir").trim() === "0";
+  // On a dark surface the near-zero end must recede toward the surface, so the
+  // ramp is reversed rather than reused as-is. An automatic flip of a light
+  // ramp is not a dark palette.
+  function rampColour(t) {
+    const steps = isDark() ? [...RAMP].reverse() : RAMP;
+    const i = Math.min(steps.length - 1, Math.max(0, Math.round(t * (steps.length - 1))));
+    return steps[i];
+  }
+
+  // ---- period filter -----------------------------------------------------
+  function filteredSplit() {
+    const rows = D.dash_revenue_split;
+    return months > 0 ? rows.slice(-months) : rows;
+  }
+  function filteredHeat() {
+    const rows = D.dash_cohort_heatmap;
+    if (months <= 0) return rows;
+    const cohorts = [...new Set(rows.map((r) => r.signup_month))].sort().slice(-months);
+    const keep = new Set(cohorts);
+    return rows.filter((r) => keep.has(r.signup_month));
+  }
+
+  // ---- stat tiles --------------------------------------------------------
+  function renderTiles() {
+    const k = D.dash_kpi[0];
+    const mom = k.revenue_mom_pct;
+    const tiles = [
+      { k: "Revenue, " + monthLabel(k.as_of_month), v: money(k.revenue_last_month),
+        d: `<span class="${mom >= 0 ? "up" : "down"}">${mom >= 0 ? "▲" : "▼"} ${pct(Math.abs(mom))}</span> vs prior month` },
+      { k: "Repeat revenue share", v: pct(k.repeat_revenue_share_pct),
+        d: "of that month's revenue came from existing customers" },
+      { k: "Month-1 retention", v: pct(k.latest_month1_retention_pct),
+        d: "latest cohort with a complete month 1" },
+      { k: "At-risk revenue", v: money(k.at_risk_revenue),
+        d: `${nf.format(k.at_risk_customers)} customers · ${pct(k.at_risk_pct_of_revenue)} of all revenue` },
+    ];
+    $("tiles").innerHTML = tiles.map((t) =>
+      `<div class="tile"><div class="k">${t.k}</div><div class="v">${t.v}</div>
+       <div class="d">${t.d}</div></div>`).join("");
+    $("genat").textContent = "· Data generated " + (D.generated_at || "").slice(0, 10);
+  }
+
+  // ---- stacked bars: new vs returning ------------------------------------
+  function renderSplit() {
+    const rows = filteredSplit();
+    const svg = $("chart-split");
+    svg.innerHTML = "";
+    const W = 980, H = 300, m = { t: 14, r: 14, b: 34, l: 62 };
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    const iw = W - m.l - m.r, ih = H - m.t - m.b;
+    const max = Math.max(...rows.map((r) => r.total_revenue)) * 1.08;
+    const bw = Math.min(46, (iw / rows.length) * 0.68);
+    const x = (i) => m.l + (iw / rows.length) * (i + 0.5);
+    const y = (v) => m.t + ih - (v / max) * ih;
+
+    // Gridlines first, recessive, never dashed.
+    for (let i = 0; i <= 4; i++) {
+      const v = (max / 4) * i;
+      svg.appendChild(svgEl("line", { class: "gridline", x1: m.l, x2: W - m.r, y1: y(v), y2: y(v) }));
+      const t = svgEl("text", { class: "ax-val", x: m.l - 9, y: y(v) + 4, "text-anchor": "end" });
+      t.textContent = i === 0 ? "0" : money(v);
+      svg.appendChild(t);
+    }
+
+    rows.forEach((r, i) => {
+      const ret = r.returning_customer_revenue, nw = r.new_customer_revenue;
+      const yRet = y(ret), yTot = y(r.total_revenue);
+      // 2px surface gap between stacked segments, rounded data-end on top only.
+      const gap = 2;
+      const hRet = Math.max(0, m.t + ih - yRet);
+      if (hRet > 0) {
+        svg.appendChild(svgEl("rect", { x: x(i) - bw / 2, y: yRet, width: bw,
+          height: hRet, rx: 0, fill: "var(--series-2)" }));
+      }
+      const hNew = Math.max(0, yRet - yTot - gap);
+      if (hNew > 0) {
+        svg.appendChild(svgEl("rect", { x: x(i) - bw / 2, y: yTot, width: bw,
+          height: hNew, rx: 4, fill: "var(--series-1)" }));
+      }
+      const hit = svgEl("rect", { class: "hit", x: x(i) - (iw / rows.length) / 2,
+        y: m.t, width: iw / rows.length, height: ih });
+      attachTip(hit, `<div class="tt-k">${monthLabel(r.order_month)}</div>
+        <div class="tt-row"><span>Total</span><b>${money(r.total_revenue)}</b></div>
+        <div class="tt-row"><span>Returning</span><span>${money(ret)} (${pct(r.pct_from_returning)})</span></div>
+        <div class="tt-row"><span>New</span><span>${money(nw)}</span></div>`);
+      svg.appendChild(hit);
+
+      // Selective labels only: first, last and every fourth.
+      if (i === 0 || i === rows.length - 1 || i % 4 === 0) {
+        const t = svgEl("text", { class: "ax", x: x(i), y: H - 12, "text-anchor": "middle" });
+        t.textContent = monthLabel(r.order_month);
+        svg.appendChild(t);
+      }
+    });
+    svg.appendChild(svgEl("line", { class: "baseline", x1: m.l, x2: W - m.r,
+      y1: m.t + ih, y2: m.t + ih }));
+
+    legend($("legend-split"), [
+      { label: "Returning customers", colour: "var(--series-2)" },
+      { label: "New customers", colour: "var(--series-1)" },
+    ]);
+
+    const first = rows[0], last = rows[rows.length - 1];
+    $("annot-split").textContent =
+      `Repeat share moved from ${pct(first.pct_from_returning)} in ${monthLabel(first.order_month)} ` +
+      `to ${pct(last.pct_from_returning)} in ${monthLabel(last.order_month)}. ` +
+      `November spikes in both years; January gives it back.`;
+  }
+
+  // ---- retention curve with range band ------------------------------------
+  function renderCurve() {
+    const rows = D.dash_retention_curve;
+    const svg = $("chart-curve");
+    svg.innerHTML = "";
+    const W = 480, H = 260, m = { t: 14, r: 18, b: 34, l: 44 };
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    const iw = W - m.l - m.r, ih = H - m.t - m.b;
+    const max = Math.max(...rows.map((r) => r.max_retention_pct)) * 1.1;
+    const x = (i) => m.l + (iw / (rows.length - 1)) * i;
+    const y = (v) => m.t + ih - (v / max) * ih;
+
+    for (let i = 0; i <= 4; i++) {
+      const v = (max / 4) * i;
+      svg.appendChild(svgEl("line", { class: "gridline", x1: m.l, x2: W - m.r, y1: y(v), y2: y(v) }));
+      const t = svgEl("text", { class: "ax-val", x: m.l - 8, y: y(v) + 4, "text-anchor": "end" });
+      t.textContent = Math.round(v) + "%";
+      svg.appendChild(t);
+    }
+
+    const band = rows.map((r, i) => `${x(i)},${y(r.max_retention_pct)}`)
+      .concat(rows.map((r, i) => `${x(rows.length - 1 - i)},${y(rows[rows.length - 1 - i].min_retention_pct)}`))
+      .join(" ");
+    svg.appendChild(svgEl("polygon", { points: band, fill: "var(--series-1)",
+      opacity: 0.14 }));
+
+    svg.appendChild(svgEl("polyline", {
+      points: rows.map((r, i) => `${x(i)},${y(r.avg_retention_pct)}`).join(" "),
+      fill: "none", stroke: "var(--series-1)", "stroke-width": 2,
+      "stroke-linejoin": "round", "stroke-linecap": "round" }));
+
+    rows.forEach((r, i) => {
+      // 2px surface ring so overlapping markers stay separable.
+      svg.appendChild(svgEl("circle", { cx: x(i), cy: y(r.avg_retention_pct), r: 4.5,
+        fill: "var(--series-1)", stroke: "var(--surface)", "stroke-width": 2 }));
+      const hit = svgEl("rect", { class: "hit", x: x(i) - iw / (rows.length - 1) / 2,
+        y: m.t, width: iw / (rows.length - 1), height: ih });
+      attachTip(hit, `<div class="tt-k">Month ${r.months_since_signup} after signup</div>
+        <div class="tt-row"><span>Average</span><b>${pct(r.avg_retention_pct)}</b></div>
+        <div class="tt-row"><span>Range</span><span>${pct(r.min_retention_pct)} – ${pct(r.max_retention_pct)}</span></div>
+        <div class="tt-row"><span>Cohorts</span><span>${r.cohorts_included}</span></div>`);
+      svg.appendChild(hit);
+      const t = svgEl("text", { class: "ax", x: x(i), y: H - 12, "text-anchor": "middle" });
+      t.textContent = "M" + r.months_since_signup;
+      svg.appendChild(t);
+    });
+
+    // Direct labels on the two points that carry the story.
+    [[0, "start"], [rows.length - 1, "end"]].forEach(([i, anchor]) => {
+      const t = svgEl("text", { class: "dlabel", x: x(i) + (anchor === "start" ? 8 : -8),
+        y: y(rows[i].avg_retention_pct) - 10, "text-anchor": anchor });
+      t.textContent = pct(rows[i].avg_retention_pct);
+      svg.appendChild(t);
+    });
+    svg.appendChild(svgEl("line", { class: "baseline", x1: m.l, x2: W - m.r,
+      y1: m.t + ih, y2: m.t + ih }));
+
+    legend($("legend-curve"), [
+      { label: "Average across cohorts", colour: "var(--series-1)" },
+      { label: "Best–worst cohort range", colour: "color-mix(in oklab, var(--series-1) 20%, var(--surface))" },
+    ]);
+
+    const drops = rows.slice(1).map((r, i) => ({
+      from: rows[i].months_since_signup, to: r.months_since_signup,
+      d: rows[i].avg_retention_pct - r.avg_retention_pct }));
+    const worst = drops.reduce((a, b) => (b.d > a.d ? b : a));
+    $("annot-curve").textContent =
+      `Steepest fall is month ${worst.from} to ${worst.to}: ${worst.d.toFixed(1)} points. ` +
+      `That is where a lifecycle programme has to reach people.`;
+  }
+
+  // ---- channel bars ------------------------------------------------------
+  function renderChannel() {
+    const rows = D.dash_channel_quality.filter((r) => r.revenue_per_naira_spent !== null);
+    const unpaid = D.dash_channel_quality.filter((r) => r.revenue_per_naira_spent === null);
+    const svg = $("chart-channel");
+    svg.innerHTML = "";
+    const rowH = 34, m = { t: 8, r: 58, b: 26, l: 96 };
+    const W = 480, H = m.t + rows.length * rowH + m.b;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    const iw = W - m.l - m.r;
+    const max = Math.max(...rows.map((r) => r.revenue_per_naira_spent)) * 1.06;
+    const x = (v) => (v / max) * iw;
+
+    for (let i = 0; i <= 3; i++) {
+      const v = (max / 3) * i;
+      svg.appendChild(svgEl("line", { class: "gridline", x1: m.l + x(v), x2: m.l + x(v),
+        y1: m.t, y2: m.t + rows.length * rowH }));
+      const t = svgEl("text", { class: "ax-val", x: m.l + x(v), y: H - 9, "text-anchor": "middle" });
+      t.textContent = "₦" + v.toFixed(0);
+      svg.appendChild(t);
+    }
+
+    rows.forEach((r, i) => {
+      const yy = m.t + i * rowH + 7;
+      const h = rowH - 16;
+      svg.appendChild(svgEl("rect", { x: m.l, y: yy, width: Math.max(2, x(r.revenue_per_naira_spent)),
+        height: h, rx: 4, fill: "var(--series-1)" }));
+      const lbl = svgEl("text", { class: "ax", x: m.l - 9, y: yy + h / 2 + 4, "text-anchor": "end" });
+      lbl.textContent = r.channel.replace("_", " ");
+      svg.appendChild(lbl);
+      // Direct value label on every bar: only six of them, and the contrast
+      // relief rule wants visible numbers.
+      const val = svgEl("text", { class: "dlabel", x: m.l + x(r.revenue_per_naira_spent) + 8,
+        y: yy + h / 2 + 4 });
+      val.textContent = "₦" + r.revenue_per_naira_spent.toFixed(2);
+      svg.appendChild(val);
+      const hit = svgEl("rect", { class: "hit", x: 0, y: m.t + i * rowH, width: W, height: rowH });
+      attachTip(hit, `<div class="tt-k">${r.channel.replace("_", " ")}</div>
+        <div class="tt-row"><span>Return per ₦1</span><b>₦${r.revenue_per_naira_spent.toFixed(2)}</b></div>
+        <div class="tt-row"><span>Blended CAC</span><span>₦${nf.format(r.blended_cac)}</span></div>
+        <div class="tt-row"><span>12-mo revenue/customer</span><span>₦${nf.format(r.revenue_per_customer_12mo)}</span></div>
+        <div class="tt-row"><span>Customers</span><span>${nf.format(r.customers)}</span></div>`);
+      svg.appendChild(hit);
+    });
+    svg.appendChild(svgEl("line", { class: "baseline", x1: m.l, x2: m.l,
+      y1: m.t, y2: m.t + rows.length * rowH }));
+
+    // Remove any note from a previous render before adding this one, so
+    // re-rendering cannot stack duplicates.
+    const prev = document.getElementById("unpaid-note");
+    if (prev) prev.remove();
+    if (unpaid.length) {
+      const names = unpaid.map((u) => u.channel).join(", ");
+      $("chart-channel").insertAdjacentHTML("afterend",
+        `<p class="annot" id="unpaid-note">No spend recorded for ${names}, so no ratio can be computed.</p>`);
+    }
+  }
+
+  // ---- cohort heatmap ----------------------------------------------------
+  function renderHeat() {
+    const rows = filteredHeat();
+    const cohorts = [...new Set(rows.map((r) => r.signup_month))].sort();
+    const maxM = Math.max(...rows.map((r) => r.months_since_signup));
+    const maxV = Math.max(...rows.map((r) => r.retention_pct));
+    const byKey = new Map(rows.map((r) => [r.signup_month + "|" + r.months_since_signup, r]));
+
+    const svg = $("chart-heat");
+    svg.innerHTML = "";
+    const cell = 34, gap = 2, m = { t: 26, r: 10, b: 10, l: 62 };
+    const W = m.l + (maxM + 1) * cell + m.r;
+    const H = m.t + cohorts.length * cell + m.b;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+
+    for (let c = 0; c <= maxM; c++) {
+      const t = svgEl("text", { class: "ax", x: m.l + c * cell + cell / 2, y: 17,
+        "text-anchor": "middle" });
+      t.textContent = "M" + c;
+      svg.appendChild(t);
+    }
+
+    cohorts.forEach((cohort, ri) => {
+      const lbl = svgEl("text", { class: "ax", x: m.l - 9, y: m.t + ri * cell + cell / 2 + 4,
+        "text-anchor": "end" });
+      lbl.textContent = monthLabel(cohort);
+      svg.appendChild(lbl);
+
+      for (let c = 0; c <= maxM; c++) {
+        const r = byKey.get(cohort + "|" + c);
+        if (!r) continue;   // censored: draw nothing at all
+        const g = svgEl("g");
+        g.appendChild(svgEl("rect", {
+          x: m.l + c * cell + gap / 2, y: m.t + ri * cell + gap / 2,
+          width: cell - gap, height: cell - gap, rx: 3,
+          fill: rampColour(r.retention_pct / maxV) }));
+        attachTip(g, `<div class="tt-k">${monthLabel(cohort)} cohort, month ${c}</div>
+          <div class="tt-row"><span>Retained</span><b>${pct(r.retention_pct)}</b></div>
+          <div class="tt-row"><span>Active</span><span>${nf.format(r.active_customers)} of ${nf.format(r.cohort_size)}</span></div>`);
+        svg.appendChild(g);
+      }
+    });
+
+    const stops = [0, 0.25, 0.5, 0.75, 1];
+    legend($("legend-heat"), stops.map((s) => ({
+      label: (s * maxV).toFixed(0) + "%", colour: rampColour(s) })));
+
+    // The table view: the accessible equivalent of a colour-only scale.
+    const head = ["Cohort", "Size"].concat([...Array(maxM + 1).keys()].map((c) => "M" + c));
+    const body = cohorts.map((cohort) => {
+      const size = rows.find((r) => r.signup_month === cohort).cohort_size;
+      const cells = [...Array(maxM + 1).keys()].map((c) => {
+        const r = byKey.get(cohort + "|" + c);
+        return `<td class="num">${r ? pct(r.retention_pct) : ""}</td>`;
+      }).join("");
+      return `<tr><td>${monthLabel(cohort)}</td><td class="num">${nf.format(size)}</td>${cells}</tr>`;
+    }).join("");
+    $("heat-table").innerHTML =
+      `<div style="overflow-x:auto"><table><caption class="note" style="text-align:left;margin-bottom:8px">
+       Retention rate by cohort. Blank cells are censored, not zero.</caption>
+       <thead><tr>${head.map((h) => `<th>${h}</th>`).join("")}</tr></thead>
+       <tbody>${body}</tbody></table></div>`;
+  }
+
+  // ---- segment table -----------------------------------------------------
+  function renderSegments() {
+    const rows = D.dash_segments;
+    const body = rows.map((r) => {
+      const act = r.recommended_action === "act now";
+      return `<tr class="${act ? "act" : ""}">
+        <td>${r.segment}</td>
+        <td class="num">${nf.format(r.customers)}</td>
+        <td class="num">${Math.round(r.avg_days_since_order)}</td>
+        <td class="num">${r.avg_orders.toFixed(2)}</td>
+        <td class="num">${money(r.avg_revenue)}</td>
+        <td class="num">${pct(r.pct_of_revenue)}</td>
+        <td><span class="pill ${act ? "now" : ""}">${r.recommended_action}</span></td></tr>`;
+    }).join("");
+    $("segments").innerHTML = `<div style="overflow-x:auto"><table>
+      <thead><tr><th>Segment</th><th>Customers</th><th>Days since order</th>
+      <th>Avg orders</th><th>Avg revenue</th><th>% of revenue</th><th>Action</th></tr></thead>
+      <tbody>${body}</tbody></table></div>`;
+  }
+
+  // ---- wire up -----------------------------------------------------------
+  function renderAll() {
+    renderTiles(); renderSplit(); renderCurve(); renderChannel();
+    renderHeat(); renderSegments();
+  }
+
+  document.querySelectorAll(".range").forEach((b) => {
+    b.addEventListener("click", () => {
+      months = Number(b.dataset.months);
+      document.querySelectorAll(".range").forEach((o) =>
+        o.setAttribute("aria-pressed", String(o === b)));
+      // Re-render only what the filter touches. Colour follows the entity, so
+      // nothing repaints: new stays blue and returning stays orange regardless
+      // of how many months are on screen.
+      renderSplit(); renderHeat();
+    });
+  });
+
+  $("tableToggle").addEventListener("click", () => {
+    heatAsTable = !heatAsTable;
+    $("heat-chart").classList.toggle("hidden", heatAsTable);
+    $("heat-table").classList.toggle("hidden", !heatAsTable);
+    $("tableToggle").setAttribute("aria-pressed", String(heatAsTable));
+    $("tableToggle").textContent = heatAsTable ? "Show heatmap as chart" : "Show heatmap as table";
+  });
+
+  $("theme").addEventListener("click", () => {
+    const root = document.documentElement;
+    const nowDark = !(root.getAttribute("data-theme") === "dark");
+    root.setAttribute("data-theme", nowDark ? "dark" : "light");
+    $("theme").setAttribute("aria-pressed", String(nowDark));
+    $("theme").textContent = nowDark ? "Light mode" : "Dark mode";
+    // The ramp direction is theme-dependent, so the heatmap must be re-stepped
+    // rather than left to inherit a CSS variable.
+    renderHeat();
+  });
+
+  window.addEventListener("resize", () => { hideTip(); });
+  renderAll();
+})();
+</script>
+</body>
+</html>

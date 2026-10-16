@@ -1,0 +1,21 @@
+feature,churn_rate_low_tercile,churn_rate_high_tercile,univariate_direction
+days_since_last_order,0.3475,0.7919,increases churn
+tenure_days,0.6057,0.4902,reduces churn
+active_span_days,0.7353,0.4281,reduces churn
+orders_total,0.7255,0.4227,reduces churn
+revenue_total,0.7037,0.4325,reduces churn
+avg_order_value,0.6231,0.5556,reduces churn
+active_months,0.732,0.4292,reduces churn
+orders_last_90d,0.7963,0.3671,reduces churn
+orders_prev_90d,0.5359,0.5381,increases churn
+order_momentum,0.6895,0.4423,reduces churn
+median_gap_days,0.7015,0.5251,reduces churn
+max_gap_days,0.732,0.4532,reduces churn
+overdue_ratio,0.3596,0.6862,increases churn
+pct_discounted,0.658,0.5763,reduces churn
+distinct_categories,0.719,0.4292,reduces churn
+bundle_items,0.6416,0.4837,reduces churn
+sessions_total,0.5675,0.5741,increases churn
+sessions_last_90d,0.5131,0.6002,increases churn
+avg_pages_viewed,0.5871,0.5566,reduces churn
+pct_mobile_sessions,0.5643,0.5828,increases churn

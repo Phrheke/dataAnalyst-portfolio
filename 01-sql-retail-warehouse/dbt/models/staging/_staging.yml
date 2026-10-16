@@ -1,0 +1,95 @@
+version: 2
+
+models:
+  - name: stg_customers
+    description: One row per customer, email normalised, test accounts flagged.
+    columns:
+      - name: customer_id
+        data_tests: [not_null, unique]
+      - name: email
+        description: Lowercased and trimmed, so it is safe to join on.
+        data_tests:
+          - not_null
+          # Unique only AFTER normalisation. On the raw column this fails,
+          # which is the whole point of normalising it.
+          - unique
+      - name: signup_date
+        data_tests: [not_null]
+      - name: is_test_account
+        data_tests: [not_null]
+      - name: acquisition_channel
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [organic, paid_search, paid_social, email, referral, direct]
+
+  - name: stg_orders
+    description: One row per order, timestamps parsed from both source formats.
+    columns:
+      - name: order_id
+        data_tests: [not_null, unique]
+      - name: customer_id
+        data_tests: [not_null]
+      - name: order_ts
+        description: >
+          Must be non-null for every row. This test is the guard on the
+          two-format parse: if upstream adds a third date format, this fails
+          loudly instead of quietly dropping revenue.
+        data_tests: [not_null]
+      - name: status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [completed, shipped, cancelled, refunded, pending]
+      - name: revenue_recognised
+        data_tests: [not_null]
+
+  - name: stg_order_items
+    description: One row per line item after de-duplication.
+    columns:
+      - name: order_item_id
+        description: >
+          Unique here but NOT in the source, where an ETL retry duplicated
+          ~1.2% of rows. This test proves the de-duplication works.
+        data_tests: [not_null, unique]
+      - name: order_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
+      - name: product_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_products')
+                field: product_id
+      - name: gross_revenue
+        data_tests:
+          - not_negative
+      - name: return_value
+        data_tests:
+          - not_negative
+
+  - name: stg_products
+    columns:
+      - name: product_id
+        data_tests: [not_null, unique]
+      - name: list_price
+        data_tests: [not_null, not_negative]
+
+  - name: stg_sessions
+    columns:
+      - name: session_id
+        data_tests: [not_null, unique]
+      - name: device
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [mobile, desktop, tablet]
+
+  - name: stg_marketing_spend
+    columns:
+      - name: spend_ngn
+        data_tests: [not_null, not_negative]

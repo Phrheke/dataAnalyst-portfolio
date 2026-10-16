@@ -1,0 +1,27 @@
+# Generated data. The generator is deterministic and committed, so the data
+# itself does not need to be: `make data` reproduces it byte for byte.
+data/raw/
+02-python-pageviews/data/cache/
+
+# Built warehouses
+*.duckdb
+*.duckdb.wal
+
+# dbt
+01-sql-retail-warehouse/dbt/target/
+01-sql-retail-warehouse/dbt/dbt_packages/
+01-sql-retail-warehouse/dbt/logs/
+.user.yml
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ipynb_checkpoints/
+.ruff_cache/
+
+# OS
+.DS_Store
+Thumbs.db
