@@ -78,7 +78,7 @@ The structure, every time: **Question → Finding → Decision → One hard thin
 > detect a reactivation lift from 6% to 9% I needed 1,209 per arm, and a 30%
 > holdback of 930 is 279. That design could only have detected a seven-point
 > lift. If the campaign had worked exactly as hoped, it would have come back
-> p = 0.12 and we'd have concluded winback doesn't work.
+> p = 0.13 and we'd have concluded winback doesn't work.
 >
 > The fix was to widen the target to the full model-scored active base and
 > split 50/50 instead of 70/30 — power is driven by the smaller arm, so an

@@ -50,8 +50,8 @@ have come back "not significant", and we would have concluded winback does not
 work when in fact we had simply not measured it.
 
 To show how bad that is: if the campaign delivered exactly the 6%→9% lift we are
-hoping for, the underpowered design returns **p = 0.12 and a confidence interval
-of −0.5% to +6.7%** — a real, valuable effect reported as a non-result. The
+hoping for, the underpowered design returns **p = 0.13 and a confidence interval
+of −0.6% to +6.5%** — a real, valuable effect reported as a non-result. The
 recommended design returns **p = 0.003** on the same underlying effect.
 
 Two changes fix it:

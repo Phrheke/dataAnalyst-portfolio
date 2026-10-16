@@ -89,7 +89,7 @@ One post when you publish the portfolio. Lead with the finding, not the launch.
 >
 > The fix was unglamorous: widen the target, and split 50/50 instead of 70/30,
 > because power is driven by the smaller arm. Same effect, p = 0.003 instead of
-> p = 0.12.
+> p = 0.13.
 >
 > Running the numbers before the campaign cost an afternoon. Running the wrong
 > campaign would have cost the idea.
