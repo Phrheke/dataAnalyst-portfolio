@@ -20,7 +20,7 @@ leaving gaps.
 ---
 
 ```
-PHRHEKE [SURNAME]
+NDIFREKE AKPAN
 [City, Country] · ruizdrey1@gmail.com · [phone]
 github.com/Phrheke/dataAnalyst-portfolio · [linkedin.com/in/...]
 
@@ -114,7 +114,7 @@ EDUCATION
 - [ ] Drop any bullet the ad gives no signal about — one page, always
 - [ ] If the ad names a BI tool you have not used, say so honestly in the cover
       note and point at the dashboard spec as evidence you understand the craft
-- [ ] Export to PDF, named `Phrheke-[Surname]-Data-Analyst.pdf`
+- [ ] Export to PDF, named `Ndifreke-Akpan-Data-Analyst.pdf`
 - [ ] Open the PDF and read it on a phone before sending
 
 ## Cover note template
@@ -132,4 +132,4 @@ Three short paragraphs. Nobody reads four.
 >
 > Happy to walk through any of it.
 >
-> Phrheke
+> Ndifreke Akpan

@@ -9,7 +9,7 @@ Keep it short. A profile README that scrolls is a profile README nobody reads.
 ---
 
 ```markdown
-## Hi, I'm Phrheke
+## Hi, I'm Ndifreke Akpan
 
 Data analyst. I turn messy transactional data into decisions someone can act
 on — and I show my working.

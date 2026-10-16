@@ -65,7 +65,7 @@ Visualization` · `pandas` · `scikit-learn` · `Statistics` · `Git`
 ## Settings
 
 - [ ] "Open to work" → recruiters only, if you are employed
-- [ ] Custom URL: `linkedin.com/in/phrheke-[surname]`
+- [ ] Custom URL: `linkedin.com/in/ndifreke-akpan`
 - [ ] A real photo. Not a logo, not an avatar.
 - [ ] Banner image — even a plain colour beats the default grey
 

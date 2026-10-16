@@ -1,4 +1,4 @@
-# Data analyst portfolio — Phrheke
+# Data analyst portfolio — Ndifreke Akpan
 
 Five projects, built to be checked rather than skimmed. Every number in every
 README is reproduced by a command in this repo, and the test suite asserts the

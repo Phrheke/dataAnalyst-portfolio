@@ -16,6 +16,10 @@ customers per head.
 
 ![Dashboard sheet](screenshots/dashboard.png)
 
+And the proof: the Checks sheet recomputes 12 figures independently in SQL and compares them with the workbook.
+
+![Checks sheet: 12 of 12 figures match SQL](screenshots/checks.png)
+
 ---
 
 ## Why an Excel project in a SQL and Python portfolio
