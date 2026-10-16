@@ -13,7 +13,7 @@ one would have done to the analysis, and what I did about it.
 | 2 | Internal QA accounts in production data | 140 customers, 299 orders | Inflates customer count and drags AOV | Flagged in staging, excluded in `analysis_orders` |
 | 3 | `country` missing | 483 rows (4.03%) | 4% of customers vanish from every country breakdown | Kept as `NULL`, plus `country_filled = 'unknown'` so rows survive `GROUP BY` |
 | 4 | `order_ts` in two formats | 622 rows (2.0%) | A plain `CAST` NULLs them — real revenue deleted, biased to whichever weeks the broken exporter ran | `coalesce(try_cast, try_strptime)` recovers all 622 |
-| 5 | `unit_price` x100 typos | 72 item rows | One ₦4.2m line item distorts AOV, LTV and every mean | Flagged `is_price_outlier`, excluded from revenue measures, **not** overwritten |
+| 5 | `unit_price` x100 typos | 72 item rows | One ₦4.8m line item distorts AOV, LTV and every mean | Flagged `is_price_outlier`, excluded from revenue measures, **not** overwritten |
 | 6 | Returns encoded as negative quantity on the original line | 261 rows | "Revenue" silently nets off refunds without being asked to | Split into `gross_revenue` and `return_value`; `net_revenue` is their difference |
 | 7 | Duplicate item rows from an ETL retry | 717 rows (1.18%) | Revenue overstated by ~1.2%, basket sizes inflated | De-duplicated by `ROW_NUMBER()` on the primary key |
 | 8 | Orders referencing deleted customers | 40 orders, ₦300,000 | An `INNER JOIN` drops real revenue and nobody notices | `LEFT JOIN` + `is_orphan_order` flag; counted in revenue totals, excluded from customer-level analysis |
@@ -29,8 +29,9 @@ reader's ability to trust the other 60,513.
 
 Threshold: `unit_price > list_price * 20`. That is a judgement call. The
 profiling query prints the flagged rows with their price-to-list ratio so a
-reviewer can disagree with the threshold on evidence — the real ratios cluster
-at ~99-100x, with nothing legitimate above 3x, so 20x is comfortably in the gap.
+reviewer can disagree with the threshold on evidence — the flagged ratios run
+from 82x to 100x (a x100 slip on a discounted price), and nothing legitimate is above
+2.7x, so 20x is comfortably in the gap.
 
 **Fault 8 — keep the revenue, drop the customer.** These 40 orders are real
 money that the business really collected; the customer record was deleted

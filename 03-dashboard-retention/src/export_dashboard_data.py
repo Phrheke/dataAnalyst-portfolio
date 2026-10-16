@@ -10,6 +10,10 @@ different places ends up with three different values.
 
 Usage:
     python 03-dashboard-retention/src/export_dashboard_data.py --db warehouse.duckdb
+    python 03-dashboard-retention/src/export_dashboard_data.py --db warehouse.duckdb --csv
+
+--csv also writes each view to 03-dashboard-retention/exports/<view>.csv, which is
+what Tableau Public and Power BI connect to (neither can open a DuckDB file).
 """
 
 from __future__ import annotations
@@ -29,6 +33,7 @@ SQL_FILES = [
     ROOT / "03-dashboard-retention" / "sql" / "dashboard_mart.sql",
 ]
 OUT = ROOT / "docs" / "dashboard" / "data.json"
+CSV_DIR = ROOT / "03-dashboard-retention" / "exports"
 
 VIEWS = [
     "dash_kpi",
@@ -64,6 +69,8 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--db", default="warehouse.duckdb", type=Path)
     ap.add_argument("--out", default=OUT, type=Path)
+    ap.add_argument("--csv", action="store_true",
+                    help="also write one CSV per view for Tableau / Power BI")
     args = ap.parse_args()
 
     if not args.db.exists():
@@ -93,6 +100,23 @@ def main() -> None:
     # GitHub Pages with no local web server required.
     js = args.out.with_suffix(".js")
     js.write_text(f"window.DASHBOARD_DATA = {body};\n")
+
+    if args.csv:
+        CSV_DIR.mkdir(parents=True, exist_ok=True)
+        for view in VIEWS:
+            dest = (CSV_DIR / f"{view}.csv").as_posix()
+            # Month columns are TIMESTAMPs (date_trunc returns one). Written as-is
+            # they read "2024-01-01 00:00:00", and Tableau then shows a time part
+            # on every axis. Cast them to DATE so the CSV says "2024-01-01".
+            cols = con.execute(f"DESCRIBE {view}").fetchall()
+            select = ", ".join(
+                f"CAST({name} AS DATE) AS {name}" if "TIMESTAMP" in str(dtype) else name
+                for name, dtype, *_ in cols
+            )
+            # COPY writes straight from the database with a header row, which
+            # both Tableau and Power BI parse without help.
+            con.execute(f"COPY (SELECT {select} FROM {view}) TO '{dest}' (HEADER, DELIMITER ',')")
+        print(f"Wrote {len(VIEWS)} CSVs to {CSV_DIR}")
 
     print(f"\nWrote {args.out} ({args.out.stat().st_size / 1024:.0f} KB)")
     print(f"Wrote {js} ({js.stat().st_size / 1024:.0f} KB)")

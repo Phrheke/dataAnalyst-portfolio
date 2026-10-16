@@ -59,7 +59,7 @@ python:
 	$(PY) 02-python-pageviews/src/analyse.py
 
 dashboard: warehouse
-	$(PY) 03-dashboard-retention/src/export_dashboard_data.py --db $(DB)
+	$(PY) 03-dashboard-retention/src/export_dashboard_data.py --db $(DB) --csv
 
 capstone: warehouse
 	$(PY) 04-capstone-churn/src/churn_model.py --db $(DB)

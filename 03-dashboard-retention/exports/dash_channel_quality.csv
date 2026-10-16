@@ -1,0 +1,7 @@
+channel,customers,blended_cac,revenue_per_customer_12mo,revenue_per_naira_spent,is_paid
+email,1430,4115.0,98390.0,23.91,true
+referral,949,14276.0,100016.0,7.01,true
+paid_search,2422,31961.0,60729.0,1.9,true
+paid_social,2287,28071.0,40301.0,1.44,true
+organic,3110,0.0,78420.0,,false
+direct,1662,0.0,75036.0,,false

@@ -68,7 +68,9 @@ backwards.
 
 The mart is tool-agnostic. `spec/SPEC.md` is a build brief anyone could follow
 in Power BI or Looker Studio, and `data.json` has the shape a scheduled BI
-extract would have.
+extract would have. **`exports/` holds the six mart views as CSV**, ready to open
+in Tableau Public or Power BI (neither can read a DuckDB file); regenerate them
+with `--csv`.
 
 ## Honest limitations
 
@@ -90,7 +92,8 @@ extract would have.
 ├── README.md                     this file
 ├── spec/SPEC.md                  the brief, written before the build
 ├── sql/dashboard_mart.sql        six purpose-built views
-├── src/export_dashboard_data.py  warehouse -> data.json + data.js
+├── src/export_dashboard_data.py  warehouse -> data.json + data.js (+ CSVs with --csv)
+├── exports/*.csv                 the six mart views, for Tableau / Power BI
 └── screenshots/                  light and dark, and a phone-width view
 
 docs/dashboard/

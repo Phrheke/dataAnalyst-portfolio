@@ -1,0 +1,7 @@
+segment,customers,avg_days_since_order,avg_orders,avg_revenue,segment_revenue,pct_of_revenue,recommended_action
+champion,1629,23.0,6.57,244907.0,398953566.41,43.5,protect
+steady,2480,176.0,2.15,66865.0,165825919.81,18.1,monitor
+at risk - was loyal,930,366.0,4.98,175101.0,162843581.99,17.8,act now
+big spender,282,132.0,6.52,293216.0,82687034.03,9.0,monitor
+lapsed,1548,418.0,1.1,38941.0,60281250.09,6.6,low priority
+promising new,931,27.0,1.14,50050.0,46596323.56,5.1,nurture

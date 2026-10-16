@@ -1,5 +1,5 @@
 window.DASHBOARD_DATA = {
- "generated_at": "2026-10-16T05:59:32",
+ "generated_at": "2026-10-16T07:36:04",
  "source": "synthetic warehouse, see src/generate_warehouse.py",
  "dash_kpi": [
   {
